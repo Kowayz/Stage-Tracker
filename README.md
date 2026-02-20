@@ -2,7 +2,10 @@
 
 Dashboard personnel pour suivre et gérer ses candidatures de stage — conçu pour les étudiants
 
+<img width="1919" height="893" alt="Dashboard" src="https://github.com/user-attachments/assets/47c5e355-b96f-4bd9-88e4-34474d16b37b" />
+
 ---
+
 
 ## Aperçu
 
@@ -41,3 +44,4 @@ Aucune installation requise. Ouvrir `index.html` dans un navigateur.
 ```
 
 ---
+
