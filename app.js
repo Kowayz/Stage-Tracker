@@ -815,42 +815,95 @@ function updateViewDOM(v) {
 }
 
 // ─── GOAL ────────────────────────────────────────────────────────────────────
-function getGoal() {
-  return Math.max(1, parseInt(localStorage.getItem(GOAL_KEY)) || 20);
+function getGoalData() {
+  try {
+    const raw = localStorage.getItem(GOAL_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && "period" in parsed) return parsed;
+    }
+  } catch (_) {}
+  return { period: "month", day: 2, week: 10, month: 30 };
+}
+
+function saveGoalData(data) {
+  localStorage.setItem(GOAL_KEY, JSON.stringify(data));
+}
+
+function countInPeriod(period) {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
+  if (period === "day") {
+    return state.candidatures.filter(c => (c.appliedDate || "").slice(0, 10) === today).length;
+  }
+  if (period === "week") {
+    const day  = now.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // back to Monday
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diff);
+    const mondayStr = `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}`;
+    return state.candidatures.filter(c => {
+      const d = (c.appliedDate || "").slice(0, 10);
+      return d >= mondayStr && d <= today;
+    }).length;
+  }
+  // month
+  const monthPrefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+  return state.candidatures.filter(c => (c.appliedDate || "").slice(0, 7) === monthPrefix).length;
 }
 
 function renderGoal() {
-  const total  = state.candidatures.length;
-  const target = getGoal();
-  const pct    = Math.min(100, Math.round((total / target) * 100));
+  const data   = getGoalData();
+  const period = data.period;
+  const target = data[period] || 1;
+  const count  = countInPeriod(period);
+  const pct    = Math.min(100, Math.round((count / target) * 100));
 
   const elCurrent = document.getElementById("goalCurrent");
   const elTarget  = document.getElementById("goalTargetVal");
   const elBar     = document.getElementById("goalBar");
   const elPct     = document.getElementById("goalPercent");
+  const elUnit    = document.getElementById("goalUnit");
   const card      = document.getElementById("goalCard");
 
-  if (elCurrent) elCurrent.textContent = total;
+  if (elCurrent) elCurrent.textContent = count;
   if (elTarget && !document.querySelector(".goal-edit-input")) elTarget.textContent = target;
-  if (elBar)     elBar.style.width     = pct + "%";
-  if (elPct)     elPct.textContent     = pct + "%";
-  if (card)      card.classList.toggle("goal-reached", pct >= 100);
+  if (elBar)    elBar.style.width = pct + "%";
+  if (elPct)    elPct.textContent = pct + "%";
+  if (elUnit)   elUnit.textContent = period === "day" ? "aujourd'hui" : period === "week" ? "cette semaine" : "ce mois";
+  if (card)     card.classList.toggle("goal-reached", pct >= 100);
+
+  document.querySelectorAll(".goal-period-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.period === period);
+  });
 }
 
 function initGoal() {
   renderGoal();
+
+  document.querySelectorAll(".goal-period-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const data = getGoalData();
+      data.period = btn.dataset.period;
+      saveGoalData(data);
+      renderGoal();
+    });
+  });
 
   const targetEl = document.getElementById("goalTargetVal");
   if (!targetEl) return;
 
   targetEl.addEventListener("click", () => {
     if (document.querySelector(".goal-edit-input")) return;
-    const current = getGoal();
-    const input = document.createElement("input");
-    input.type = "number";
-    input.min  = "1";
-    input.max  = "999";
-    input.value = current;
+    const data   = getGoalData();
+    const period = data.period;
+    const input  = document.createElement("input");
+    input.type      = "number";
+    input.min       = "1";
+    input.max       = "999";
+    input.value     = data[period] || 1;
     input.className = "goal-edit-input";
     targetEl.replaceWith(input);
     input.focus();
@@ -858,7 +911,9 @@ function initGoal() {
 
     function save() {
       const val = Math.max(1, parseInt(input.value) || 1);
-      localStorage.setItem(GOAL_KEY, val);
+      const d   = getGoalData();
+      d[period] = val;
+      saveGoalData(d);
       input.replaceWith(targetEl);
       renderGoal();
     }
