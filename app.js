@@ -39,6 +39,8 @@ const STATUS_ICONS = {
 
 const PRIORITY_ICONS = { Haute: "🔴", Moyenne: "🟡", Basse: "🟢" };
 
+const GOAL_KEY = "stageTracker_goal";
+
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
 const PROFILE = {
   name:     "Ethan Geslin",
@@ -446,6 +448,7 @@ function render() {
   if (state.view === "list") renderList();
   else renderKanban();
   updateSortHeaders();
+  renderGoal();
 }
 
 function updateSortHeaders() {
@@ -811,6 +814,62 @@ function updateViewDOM(v) {
   render();
 }
 
+// ─── GOAL ────────────────────────────────────────────────────────────────────
+function getGoal() {
+  return Math.max(1, parseInt(localStorage.getItem(GOAL_KEY)) || 20);
+}
+
+function renderGoal() {
+  const total  = state.candidatures.length;
+  const target = getGoal();
+  const pct    = Math.min(100, Math.round((total / target) * 100));
+
+  const elCurrent = document.getElementById("goalCurrent");
+  const elTarget  = document.getElementById("goalTargetVal");
+  const elBar     = document.getElementById("goalBar");
+  const elPct     = document.getElementById("goalPercent");
+  const card      = document.getElementById("goalCard");
+
+  if (elCurrent) elCurrent.textContent = total;
+  if (elTarget && !document.querySelector(".goal-edit-input")) elTarget.textContent = target;
+  if (elBar)     elBar.style.width     = pct + "%";
+  if (elPct)     elPct.textContent     = pct + "%";
+  if (card)      card.classList.toggle("goal-reached", pct >= 100);
+}
+
+function initGoal() {
+  renderGoal();
+
+  const targetEl = document.getElementById("goalTargetVal");
+  if (!targetEl) return;
+
+  targetEl.addEventListener("click", () => {
+    if (document.querySelector(".goal-edit-input")) return;
+    const current = getGoal();
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min  = "1";
+    input.max  = "999";
+    input.value = current;
+    input.className = "goal-edit-input";
+    targetEl.replaceWith(input);
+    input.focus();
+    input.select();
+
+    function save() {
+      const val = Math.max(1, parseInt(input.value) || 1);
+      localStorage.setItem(GOAL_KEY, val);
+      input.replaceWith(targetEl);
+      renderGoal();
+    }
+    input.addEventListener("blur", save);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter")  { e.preventDefault(); save(); }
+      if (e.key === "Escape") { input.replaceWith(targetEl); }
+    });
+  });
+}
+
 // ─── PROFILE PANEL ───────────────────────────────────────────────────────────
 function initProfilePanel() {
   const btn     = document.getElementById("btnProfile");
@@ -861,6 +920,7 @@ function initProfilePanel() {
 function init() {
   loadData();
   initTheme();
+  initGoal();
   initProfilePanel();
   updateHeaderDate();
   render();
