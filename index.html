@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Stage — Suivi des Candidatures</title>
+    <meta name="theme-color" content="#3E2A29" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta
+      name="description"
+      content="Dashboard personnel pour suivre et gérer vos candidatures de stage."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  </head>
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="36" height="36" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#3E2A29"/>
+            <rect x="13" y="14" width="38" height="42" rx="5" fill="#F5EEE8"/>
+            <rect x="24" y="10" width="16" height="9" rx="4" fill="#A1887F"/>
+            <polyline points="20,27 23,30 29,24" fill="none" stroke="#66BB6A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="32" y="26" width="14" height="2.5" rx="1.25" fill="#BCAAA4"/>
+            <polyline points="20,37 23,40 29,34" fill="none" stroke="#66BB6A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="32" y="36" width="10" height="2.5" rx="1.25" fill="#BCAAA4"/>
+            <rect x="20" y="46" width="4" height="2.5" rx="1.25" fill="#D7CCC8"/>
+            <rect x="27" y="46" width="18" height="2.5" rx="1.25" fill="#D7CCC8"/>
+          </svg>
+          <div>
+            <h1 class="logo-title">Stage Tracker</h1>
+            <p class="logo-sub">Suivi de candidatures</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="header-date" id="headerDate"></span>
+        
+        <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div> <!-- Separator -->
+
+        <button class="theme-toggle-btn" id="btnThemeToggle" title="Changer le thème">
+          🌙
+        </button>
+
+        <button class="btn btn-secondary btn-icon" id="btnData" title="Gérer les données">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s 9-1.34 9-3V5"></path>
+          </svg>
+        </button>
+        
+        <button class="btn btn-primary" id="btnAdd">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Ajouter
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+      <!-- KPI CARDS -->
+      <section class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card kpi-total">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-info">
+            <span class="kpi-value" id="kpiTotal">0</span>
+            <span class="kpi-label">Total</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-active">
+          <div class="kpi-icon">🔄</div>
+          <div class="kpi-info">
+            <span class="kpi-value" id="kpiActive">0</span>
+            <span class="kpi-label">En cours</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-interview">
+          <div class="kpi-icon">🎙️</div>
+          <div class="kpi-info">
+            <span class="kpi-value" id="kpiInterview">0</span>
+            <span class="kpi-label">Entretiens</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-offer">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-info">
+            <span class="kpi-value" id="kpiOffer">0</span>
+            <span class="kpi-label">Offres reçues</span>
+          </div>
+        </div>
+        <div class="kpi-card kpi-rejected">
+          <div class="kpi-icon">❌</div>
+          <div class="kpi-info">
+            <span class="kpi-value" id="kpiRejected">0</span>
+            <span class="kpi-label">Refus</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TOOLBAR -->
+      <section class="toolbar">
+        <div class="toolbar-filters">
+          <div class="search-wrap">
+            <svg
+              class="search-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Rechercher entreprise, poste…"
+            />
+          </div>
+          <select id="filterStatus" class="filter-select">
+            <option value="">Tous les statuts</option>
+            <option value="À postuler">À postuler</option>
+            <option value="Postulé">Postulé</option>
+            <option value="Relance">Relance</option>
+            <option value="Entretien">Entretien</option>
+            <option value="Test technique">Test technique</option>
+            <option value="Offre reçue">Offre reçue</option>
+            <option value="Refusé">Refusé</option>
+            <option value="Abandonné">Abandonné</option>
+          </select>
+          <select id="filterSector" class="filter-select">
+            <option value="">Tous les secteurs</option>
+          </select>
+          <select id="filterPriority" class="filter-select">
+            <option value="">Toutes priorités</option>
+            <option value="Haute">Haute</option>
+            <option value="Moyenne">Moyenne</option>
+            <option value="Basse">Basse</option>
+          </select>
+          <button class="btn btn-ghost" id="btnClearFilters">
+            Réinitialiser
+          </button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="btnListView" title="Vue liste">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            Liste
+          </button>
+          <button class="view-btn" id="btnKanbanView" title="Vue Kanban">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="7" height="18" />
+              <rect x="14" y="3" width="7" height="10" />
+            </svg>
+            Kanban
+          </button>
+        </div>
+      </section>
+
+      <!-- LIST VIEW -->
+      <section class="view-section" id="listView">
+        <div class="table-wrap">
+          <table class="table" id="candidaturesTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-col="company">
+                  Entreprise <span class="sort-icon">↕</span>
+                </th>
+                <th class="sortable" data-col="location">
+                  Lieu <span class="sort-icon">↕</span>
+                </th>
+                <th class="sortable" data-col="sector">
+                  Secteur <span class="sort-icon">↕</span>
+                </th>
+                <th class="sortable" data-col="status">
+                  Statut <span class="sort-icon">↕</span>
+                </th>
+                <th class="sortable" data-col="priority">
+                  Priorité <span class="sort-icon">↕</span>
+                </th>
+                <th class="sortable" data-col="appliedDate">
+                  Date <span class="sort-icon">↕</span>
+                </th>
+                <th>Contact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display: none">
+            <div class="empty-icon">🔍</div>
+            <p>Aucune candidature trouvée</p>
+            <span
+              >Essayez de modifier vos filtres ou ajoutez une nouvelle
+              candidature.</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- KANBAN VIEW -->
+      <section class="view-section" id="kanbanView" style="display: none">
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </section>
+    </main>
+
+    <!-- ===== MODAL ADD/EDIT ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div
+        class="modal"
+        id="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Nouvelle candidature</h2>
+          <button class="modal-close" id="modalClose" aria-label="Fermer">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <form class="modal-form" id="candidatureForm" novalidate>
+          <input type="hidden" id="formId" />
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formCompany">Entreprise *</label>
+              <input
+                type="text"
+                id="formCompany"
+                placeholder="Ex: Google, LVMH…"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="formPosition">Poste *</label>
+              <input
+                type="text"
+                id="formPosition"
+                placeholder="Ex: Développeur Full Stack"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formLocation">Lieu</label>
+              <input
+                type="text"
+                id="formLocation"
+                placeholder="Ex: Paris, Lyon, Télétravail…"
+              />
+            </div>
+            <div class="form-group">
+              <label for="formSector">Secteur</label>
+              <input
+                type="text"
+                id="formSector"
+                placeholder="Ex: Tech, Finance, Santé…"
+                list="sectorList"
+              />
+              <datalist id="sectorList"></datalist>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formStatus">Statut *</label>
+              <select id="formStatus" required>
+                <option value="À postuler">À postuler</option>
+                <option value="Postulé" selected>Postulé</option>
+                <option value="Relance">Relance</option>
+                <option value="Entretien">Entretien</option>
+                <option value="Test technique">Test technique</option>
+                <option value="Offre reçue">Offre reçue</option>
+                <option value="Refusé">Refusé</option>
+                <option value="Abandonné">Abandonné</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="formPriority">Priorité</label>
+              <select id="formPriority">
+                <option value="Haute">🔴 Haute</option>
+                <option value="Moyenne" selected>🟡 Moyenne</option>
+                <option value="Basse">🟢 Basse</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formAppliedDate">Date de candidature</label>
+              <div class="date-input-wrapper" id="formAppliedDateWrap">
+                <input type="text" id="formAppliedDate" data-input placeholder="Sélectionner une date" readonly />
+                <button type="button" class="date-icon-btn" data-toggle title="Choisir une date">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="formLink">Lien de l'offre</label>
+              <input type="url" id="formLink" placeholder="https://…" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formContactName">Nom du contact</label>
+              <input
+                type="text"
+                id="formContactName"
+                placeholder="Ex: Marie Dupont"
+              />
+            </div>
+            <div class="form-group">
+              <label for="formContactEmail">Email du contact</label>
+              <input
+                type="email"
+                id="formContactEmail"
+                placeholder="contact@entreprise.com"
+              />
+            </div>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="formNotes">Notes</label>
+            <textarea
+              id="formNotes"
+              rows="3"
+              placeholder="Informations supplémentaires, impressions, prochaines étapes…"
+            ></textarea>
+          </div>
+
+        </form>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="formCancel">
+            Annuler
+          </button>
+          <button type="submit" form="addForm" class="btn btn-primary" id="formSubmit">
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GRAVITY DATA MODAL ===== -->
+    <div class="modal-overlay" id="dataModalOverlay">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <h2 class="modal-title">Gestion des Données</h2>
+          <button class="modal-close" id="dataClose">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+          </button>
+        </div>
+        <div style="padding: 24px;">
+           <div style="display:grid; gap:12px;">
+             <button class="btn btn-secondary" id="btnExportJSON" style="justify-content:flex-start; width:100%">
+               <span style="margin-right:8px">💾</span> Sauvegarder (JSON)
+             </button>
+             <button class="btn btn-secondary" id="btnImportJSON" style="justify-content:flex-start; width:100%">
+               <span style="margin-right:8px">📂</span> Restaurer (JSON)
+             </button>
+             <hr style="border:0; border-top:1px solid var(--border); margin:4px 0;">
+             <button class="btn btn-secondary" id="btnExportCSV" style="justify-content:flex-start; width:100%">
+               <span style="margin-right:8px">📊</span> Exporter pour Excel (.xls)
+             </button>
+           </div>
+           <input type="file" id="importFile" accept=".json" style="display:none">
+           <p style="margin-top:16px; font-size:12px; color:var(--text-muted); line-height:1.4">
+             <strong>Note:</strong> La restauration écrasera toutes les données actuelles.
+           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MODAL CONFIRM DELETE ===== -->
+    <div class="modal-overlay" id="deleteOverlay">
+      <div class="modal modal-sm" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <h2 class="modal-title">Supprimer la candidature</h2>
+          <button class="modal-close" id="deleteClose">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <p class="delete-msg">
+          Êtes-vous sûr de vouloir supprimer la candidature chez
+          <strong id="deleteCompanyName"></strong> ? Cette action est
+          irréversible.
+        </p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="deleteCancelBtn">Annuler</button>
+          <button class="btn btn-danger" id="deleteConfirmBtn">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
