@@ -413,7 +413,7 @@ function openAdd() {
   document.getElementById("formSubmit").textContent = "Ajouter";
   document.getElementById("candidatureForm").reset();
   document.getElementById("formId").value = "";
-  fpAppliedDate.setDate(new Date(), false);
+  if (fpAppliedDate) fpAppliedDate.setDate(new Date(), false);
   openModal("modalOverlay");
 }
 
@@ -430,7 +430,7 @@ function openEdit(id) {
   document.getElementById("formSector").value = c.sector || "";
   document.getElementById("formStatus").value = c.status || "Postulé";
   document.getElementById("formPriority").value = c.priority || "Moyenne";
-  fpAppliedDate.setDate(c.appliedDate || null, false);
+  if (fpAppliedDate) fpAppliedDate.setDate(c.appliedDate || null, false);
   document.getElementById("formLink").value = c.link || "";
   document.getElementById("formContactName").value = c.contactName || "";
   document.getElementById("formContactEmail").value = c.contactEmail || "";
@@ -767,13 +767,17 @@ function init() {
   updateHeaderDate();
   render();
 
-  fpAppliedDate = flatpickr("#formAppliedDateWrap", {
-    locale: "fr",
-    dateFormat: "Y-m-d",
-    disableMobile: true,
-    wrap: true,
-    static: true,
-  });
+  try {
+    fpAppliedDate = flatpickr("#formAppliedDateWrap", {
+      locale: "fr",
+      dateFormat: "Y-m-d",
+      disableMobile: true,
+      wrap: true,
+      static: true,
+    });
+  } catch (e) {
+    console.warn("Flatpickr non chargé, sélecteur de date désactivé.", e);
+  }
   checkExportFreshness(); // Backup Alert
 
   // Header buttons
