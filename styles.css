@@ -1501,28 +1501,89 @@ span.flatpickr-weekday {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .welcome-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-}
+
+/* ── Tablet large (≤ 1200px) ── */
 @media (max-width: 1200px) {
   .kpi-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── Tablet (≤ 900px) ── */
 @media (max-width: 900px) {
-  .main { padding: 18px 16px 48px; }
-  .header { padding: 14px 18px; }
+  .header  { padding: 0 18px; }
+  .header-right { gap: 8px; }
+  .main    { padding: 16px 16px 48px; gap: 14px; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .form-row { grid-template-columns: 1fr; }
-  .toolbar { flex-direction: column; align-items: stretch; }
-  .toolbar-filters { flex-direction: column; }
-  .search-wrap { max-width: 100%; }
-  .letter-body { flex-direction: column; }
-  .letter-config { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+  .toolbar { flex-direction: column; align-items: stretch; padding: 12px 14px; }
+  .toolbar-filters { flex-wrap: wrap; gap: 8px; }
+  .search-wrap { max-width: 100%; min-width: 0; flex: 1 1 100%; }
+  .filter-select { flex: 1; min-width: 100px; }
+  .view-toggle { align-self: flex-end; }
+  .welcome-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
-@media (max-width: 600px) {
-  .kpi-grid { grid-template-columns: 1fr 1fr; }
+
+/* ── Phone (≤ 640px) ── */
+@media (max-width: 640px) {
+  /* Header: hide date & separator to reclaim space */
+  .header-date { display: none; }
+  .header-sep  { display: none; }
   .header-right .btn-export { display: none; }
-  .table { font-size: 12px; }
-  .table th, .table td { padding: 10px 10px; }
+
+  /* KPIs: 2 cols */
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Table: horizontal scroll so it doesn't crush */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table      { min-width: 560px; font-size: 12.5px; }
+  .table th, .table td { padding: 10px 12px; }
+
+  /* Kanban: stack columns vertically instead of horizontal scroll */
+  .kanban-board   { flex-direction: column; overflow-x: visible; }
+  .kanban-column  { flex: none; width: 100%; max-height: none; }
+}
+
+/* ── Small phone (≤ 480px) ── */
+@media (max-width: 480px) {
+  .header  { padding: 0 12px; height: 52px; }
+  .main    { padding: 12px 10px 48px; gap: 10px; }
+
+  /* Logo: hide subtitle */
+  .logo-sub { display: none; }
+  .logo-icon { width: 28px !important; height: 28px !important; }
+
+  /* "Ajouter" button: icon only on tiny screens */
+  #btnAdd { font-size: 0; padding: 0 12px; gap: 0; }
+  #btnAdd svg { flex-shrink: 0; }
+
+  /* KPI cards: more compact */
+  .kpi-card   { padding: 14px 14px; gap: 10px; border-radius: 16px; }
+  .kpi-value  { font-size: 26px; }
+  .kpi-label  { font-size: 10px; }
+  .kpi-icon   { width: 40px; height: 40px; font-size: 18px; border-radius: 10px; }
+
+  /* Toolbar */
+  .toolbar { padding: 10px; gap: 8px; }
+  .filter-select { font-size: 12px; padding: 7px 24px 7px 9px; }
+  .btn-ghost { padding: 0 12px; font-size: 12px; }
+
+  /* Theme picker: centre par rapport à la fenêtre pour éviter overflow */
+  .theme-picker-panel {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px) scale(0.97);
+    width: calc(100vw - 32px);
+    max-width: 280px;
+  }
+  .theme-picker-panel.open {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  /* Modal: occupe toute la largeur */
+  .modal-overlay { padding: 8px; }
+  .modal         { border-radius: var(--radius-md); }
+  .modal-header  { padding: 16px 18px 8px; }
+  .modal-form    { padding: 8px 18px 18px; gap: 10px; }
+  .modal-actions { padding: 12px 18px; }
 }
 
 /* ===== KANBAN ===== */
