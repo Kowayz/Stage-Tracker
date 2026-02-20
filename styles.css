@@ -1879,24 +1879,54 @@ span.flatpickr-weekday {
 /* ===== SITE FOOTER ===== */
 .site-footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: 8px;
-  padding: 20px 32px 28px;
-  font-size: 11.5px;
+  padding: 28px 32px 36px;
   color: var(--text-muted);
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin-bottom: 12px;
 }
 .site-footer:hover { opacity: 1; }
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary);
+}
+.footer-brand-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.footer-credits {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+}
 .site-footer a {
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.15s;
 }
 .site-footer a:hover { color: var(--primary); }
-.footer-dot { opacity: 0.4; }
+.footer-dot { opacity: 0.35; }
 
 /* Mobile: bottom sheet */
 @media (max-width: 480px) {
