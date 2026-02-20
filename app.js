@@ -58,25 +58,59 @@ function uid() {
 }
 
 // ─── THEME MANAGER ───────────────────────────────────────────────────────────
-function initTheme() {
-  const btn = document.getElementById("btnThemeToggle");
-  const saved = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", saved);
-  updateThemeIcon(saved);
+const THEME_ICONS = {
+  "light":         "☀️",
+  "dark":          "🌙",
+  "pistache":      "🌿",
+  "pistache-dark": "🌿",
+  "ocean":         "🌊",
+  "ocean-dark":    "🌊",
+  "pastel":        "🌸",
+  "pastel-dark":   "🌸",
+};
 
-  btn.addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("theme", next);
-    updateThemeIcon(next);
+function initTheme() {
+  const btn   = document.getElementById("btnThemeToggle");
+  const panel = document.getElementById("themePickerPanel");
+  const wrap  = document.getElementById("themePickerWrap");
+  const saved = localStorage.getItem("theme") || "light";
+  applyTheme(saved);
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = panel.classList.toggle("open");
+    panel.setAttribute("aria-hidden", String(!open));
+  });
+
+  document.querySelectorAll(".theme-swatch").forEach(swatch => {
+    swatch.addEventListener("click", () => {
+      const t = swatch.dataset.theme;
+      applyTheme(t);
+      localStorage.setItem("theme", t);
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (wrap && !wrap.contains(e.target)) {
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+    }
+  });
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  updateThemeIcon(theme);
+  document.querySelectorAll(".theme-swatch").forEach(s => {
+    s.classList.toggle("active", s.dataset.theme === theme);
   });
 }
 
 function updateThemeIcon(theme) {
   const btn = document.getElementById("btnThemeToggle");
-  // Sun for dark mode (to switch to light), Moon for light
-  btn.textContent = theme === "dark" ? "☀️" : "🌙"; 
+  if (btn) btn.textContent = THEME_ICONS[theme] || "🎨";
 }
 
 // ─── BACKUP MANAGER ──────────────────────────────────────────────────────────
