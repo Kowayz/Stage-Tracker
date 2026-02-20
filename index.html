@@ -89,6 +89,13 @@
           </div>
         </div>
 
+        <button class="btn btn-secondary btn-icon" id="btnProfile" title="Mon profil">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+
         <button class="btn btn-secondary btn-icon" id="btnData" title="Gérer les données">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -506,6 +513,24 @@
       </div>
     </div>
 
+
+    <!-- ===== PROFILE PANEL ===== -->
+    <div class="profile-overlay" id="profileOverlay"></div>
+    <aside class="profile-panel" id="profilePanel" aria-hidden="true">
+      <div class="profile-panel-header">
+        <h2 class="profile-panel-title">Profil</h2>
+        <button class="modal-close" id="profileClose" aria-label="Fermer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="profile-body" id="profileBody"></div>
+      <div class="profile-panel-footer">
+        Stage Tracker · <a href="https://github.com/Kowayz/Stage-Tracker" target="_blank" rel="noopener noreferrer">Kowayz/Stage-Tracker</a>
+      </div>
+    </aside>
 
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
