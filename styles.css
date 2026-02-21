@@ -1095,6 +1095,21 @@ html {
 
 .actions-cell { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
 
+/* ── Type badge (Stage / Alternance / CDI…) ── */
+.type-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  vertical-align: middle;
+  letter-spacing: 0.3px;
+}
+
 /* ── Sector badge ── */
 .sector-badge {
   display: inline-block;
@@ -1354,6 +1369,7 @@ html {
   gap: 5px;
 }
 .form-group-full { grid-column: 1 / -1; }
+.form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
 
 .form-group label {
   font-size: 11px;

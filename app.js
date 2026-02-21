@@ -1,4 +1,4 @@
-/* ===== APP.JS — Stage Tracker ===== */
+/* ===== APP.JS — Job Tracker ===== */
 "use strict";
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
@@ -356,7 +356,7 @@ function renderList() {
         <div style="display:flex;align-items:center;gap:11px;">
           <div class="company-logo">${initial}</div>
           <div>
-            <div class="cell-company">${escHtml(c.company)}</div>
+            <div class="cell-company">${escHtml(c.company)}${c.type ? `<span class="type-badge">${escHtml(c.type)}</span>` : ""}</div>
             <div class="cell-position">${escHtml(c.position)}</div>
           </div>
         </div>
@@ -576,6 +576,7 @@ function openEdit(id) {
   document.getElementById("formPosition").value = c.position || "";
   document.getElementById("formLocation").value = c.location || "";
   document.getElementById("formSector").value = c.sector || "";
+  document.getElementById("formType").value = c.type || "Stage";
   document.getElementById("formStatus").value = c.status || "Postulé";
   document.getElementById("formPriority").value = c.priority || "Moyenne";
   if (fpAppliedDate) fpAppliedDate.setDate(c.appliedDate || null, false);
@@ -643,6 +644,7 @@ function handleFormSubmit(e) {
     location:     document.getElementById("formLocation").value.trim(),
     sector: document.getElementById("formSector").value.trim(),
 
+    type: document.getElementById("formType").value,
     status: document.getElementById("formStatus").value,
     priority: document.getElementById("formPriority").value,
     appliedDate: document.getElementById("formAppliedDate").value,
@@ -839,7 +841,7 @@ function exportExcel() {
       </tbody>
     </table>
     <br>
-    <div style="font-size:10px; color:#94a3b8; font-style:italic">Généré par Stage Tracker le ${new Date().toLocaleString()}</div>
+    <div style="font-size:10px; color:#94a3b8; font-style:italic">Généré par Job Tracker le ${new Date().toLocaleString()}</div>
     </body>
     </html>
   `;
@@ -874,7 +876,7 @@ function exportPDF() {
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
-  doc.text("Stage Tracker", 14, 13);
+  doc.text("Job Tracker", 14, 13);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.text("Rapport de suivi des candidatures", 14, 19);
@@ -979,11 +981,11 @@ function exportPDF() {
     doc.setTextColor(203, 213, 225);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
-    doc.text("Stage Tracker — github.com/Kowayz/Stage-Tracker", 14, yFoot);
+    doc.text("Job Tracker — github.com/Kowayz/Stage-Tracker", 14, yFoot);
     doc.text(`Page ${p} / ${pageCount}`, W - 14, yFoot, { align: "right" });
   }
 
-  doc.save(`Stage_Tracker_${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save(`Job_Tracker_${new Date().toISOString().slice(0, 10)}.pdf`);
   showToast("PDF téléchargé !", "success");
 }
 
@@ -1437,7 +1439,7 @@ function exportJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `stage_tracker_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `job_tracker_backup_${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
