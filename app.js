@@ -39,6 +39,7 @@ const STATUS_ICONS = {
 
 const PRIORITY_ICONS = { Haute: "🔴", Moyenne: "🟡", Basse: "🟢" };
 
+
 const GOAL_KEY = "stageTracker_goal";
 
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
@@ -78,8 +79,10 @@ function uid() {
 
 // ─── THEME MANAGER ───────────────────────────────────────────────────────────
 const THEME_ICONS = {
-  "light":         "☀️",
-  "dark":          "🌙",
+  "cafe":          "☕",
+  "dark":          "☕",
+  "clair":         "🔆",
+  "sombre":        "🌑",
   "pistache":      "🌿",
   "pistache-dark": "🌿",
   "ocean":         "🌊",
@@ -92,7 +95,7 @@ function initTheme() {
   const btn   = document.getElementById("btnThemeToggle");
   const panel = document.getElementById("themePickerPanel");
   const wrap  = document.getElementById("themePickerWrap");
-  const saved = localStorage.getItem("theme") || "light";
+  const saved = localStorage.getItem("theme") || "cafe";
   applyTheme(saved);
 
   btn.addEventListener("click", (e) => {
@@ -310,14 +313,27 @@ function renderList() {
   }
   empty.style.display = "none";
 
-  tbody.innerHTML = list
-    .map(
-      (c) => {
-        const initial = c.company.charAt(0).toUpperCase();
-        return `
+  tbody.innerHTML = list.map((c) => {
+    const initial = c.company.charAt(0).toUpperCase();
+
+    const locationHtml = c.location
+      ? `<span style="display:inline-flex;align-items:center;gap:5px;">
+           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+           ${escHtml(c.location)}
+         </span>`
+      : `<span style="color:var(--text-muted)">—</span>`;
+
+    const contactHtml = c.contactName
+      ? `<span style="display:inline-flex;align-items:center;gap:5px;">
+           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+           ${escHtml(c.contactName)}
+         </span>`
+      : `<span style="color:var(--text-muted)">—</span>`;
+
+    return `
     <tr data-status="${escHtml(c.status)}">
       <td class="company-cell">
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:11px;">
           <div class="company-logo">${initial}</div>
           <div>
             <div class="cell-company">${escHtml(c.company)}</div>
@@ -325,22 +341,16 @@ function renderList() {
           </div>
         </div>
       </td>
-      <td class="location-cell">${c.location ? `📍 ${escHtml(c.location)}` : "—"}</td>
-      <td>${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : "—"}</td>
+      <td class="location-cell">${locationHtml}</td>
+      <td>${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : `<span style="color:var(--text-muted)">—</span>`}</td>
       <td><span class="status-badge status-${slugify(c.status)}">${escHtml(c.status)}</span></td>
       <td><span class="priority-badge priority-${slugify(c.priority)}">${PRIORITY_ICONS[c.priority] || ""} ${escHtml(c.priority)}</span></td>
-      <td class="date-cell">
-        ${formatDate(c.appliedDate)}
-      </td>
-      <td class="contact-cell">${c.contactName ? escHtml(c.contactName) : "—"}</td>
+      <td class="date-cell">${formatDate(c.appliedDate)}</td>
+      <td class="contact-cell">${contactHtml}</td>
       <td class="actions-cell">
-        ${
-          c.link
-            ? `<button class="btn-icon link" onclick="openLink('${escHtml(c.link)}')" title="Voir l'offre">
+        ${c.link ? `<button class="btn-icon link" onclick="openLink('${escHtml(c.link)}')" title="Voir l'offre">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </button>`
-            : ""
-        }
+        </button>` : ""}
         <button class="btn-icon edit" onclick="openEdit('${c.id}')" title="Modifier">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -348,11 +358,8 @@ function renderList() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
       </td>
-    </tr>
-  `;
-      },
-    )
-    .join("");
+    </tr>`;
+  }).join("");
 }
 
 // ─── RENDER KANBAN ────────────────────────────────────────────────────────────
@@ -971,11 +978,27 @@ function initProfilePanel() {
   });
 }
 
+// ─── MAIL FAB ────────────────────────────────────────────────────────────────
+function initMailFab() {
+  const fab   = document.getElementById("mailFab");
+  const panel = document.getElementById("mailFabPanel");
+  if (!fab || !panel) return;
+
+  function open()  { panel.classList.add("open"); fab.classList.add("open"); panel.removeAttribute("aria-hidden"); }
+  function close() { panel.classList.remove("open"); fab.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); }
+  function toggle() { panel.classList.contains("open") ? close() : open(); }
+
+  fab.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
+  document.addEventListener("click", (e) => { if (!e.target.closest("#mailFabWrap")) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+}
+
 // ─── INIT ──────────────────────────────────────────────────────────────────
 function init() {
   loadData();
   initTheme();
   initGoal();
+  initMailFab();
   initProfilePanel();
   updateHeaderDate();
   render();

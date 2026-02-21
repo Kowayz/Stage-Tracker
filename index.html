@@ -53,7 +53,15 @@
           <div class="theme-picker-panel" id="themePickerPanel" aria-hidden="true">
             <p class="theme-picker-label">Apparence</p>
             <div class="theme-picker-grid">
-              <button class="theme-swatch" data-theme="light">
+              <button class="theme-swatch" data-theme="clair">
+                <span class="swatch-dot swatch-clair"></span>
+                Clair
+              </button>
+              <button class="theme-swatch" data-theme="sombre">
+                <span class="swatch-dot swatch-sombre"></span>
+                Sombre
+              </button>
+              <button class="theme-swatch" data-theme="cafe">
                 <span class="swatch-dot swatch-cafe"></span>
                 Café
               </button>
@@ -193,37 +201,6 @@
           <span class="goal-percent" id="goalPercent">0%</span>
         </div>
       </section>
-
-      <!-- MAIL SHORTCUT -->
-      <div class="mail-shortcut-card">
-        <div class="mail-shortcut-left">
-          <div class="mail-shortcut-icon-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2" y="4" width="20" height="16" rx="2"/>
-              <polyline points="2,4 12,13 22,4"/>
-            </svg>
-          </div>
-          <span class="mail-shortcut-title">Consulter ma boite mail</span>
-        </div>
-        <div class="mail-providers">
-          <a class="mail-provider-btn" href="https://mail.google.com" target="_blank" rel="noopener" title="Gmail">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 24.6L6 12v4.8l18 12.6 18-12.6V12z"/><path fill="#4285F4" d="M6 12h36v24H6z" opacity=".1"/><path fill="#34A853" d="M42 12v24H6V12"/><path fill="#FBBC05" d="M6 36V12l18 12.6z"/><path fill="#EA4335" d="M42 12 24 24.6 6 12h36z"/><rect width="48" height="48" fill="none"/><path fill="#4285F4" d="M42 12v24H30V20.4z"/><path fill="#34A853" d="M18 20.4V36H6V12z"/></svg>
-            Gmail
-          </a>
-          <a class="mail-provider-btn" href="https://outlook.live.com/mail/inbox" target="_blank" rel="noopener" title="Outlook">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#0078D4"/><rect x="6" y="10" width="22" height="28" rx="2" fill="#fff" opacity=".15"/><path fill="#fff" d="M15 15a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/><path fill="#fff" d="M27 16h13v2.5l-8 5.5 8 5.5V32H27v-2.5l8-5.5-8-5.5z"/></svg>
-            Outlook
-          </a>
-          <a class="mail-provider-btn" href="https://mail.yahoo.com" target="_blank" rel="noopener" title="Yahoo Mail">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#6001D2"/><path fill="#fff" d="M10 13h8l6 11 6-11h8L26 33v9h-6v-9z"/></svg>
-            Yahoo
-          </a>
-          <a class="mail-provider-btn" href="https://mail.proton.me" target="_blank" rel="noopener" title="ProtonMail">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#6D4AFF"/><path fill="#fff" d="M10 13h16c5.5 0 10 4.5 10 10s-4.5 10-10 10H22v8h-6V13h-6zm12 6v8h4a4 4 0 0 0 0-8h-4z"/></svg>
-            Proton
-          </a>
-        </div>
-      </div>
 
       <!-- TOOLBAR -->
       <section class="toolbar">
@@ -619,6 +596,37 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <!-- ===== MAIL FAB ===== -->
+    <div class="mail-fab-wrap" id="mailFabWrap">
+      <div class="mail-fab-panel" id="mailFabPanel" aria-hidden="true">
+        <p class="mail-fab-label">Ouvrir votre boite mail</p>
+        <a class="mail-provider-btn" href="https://mail.google.com" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M42 12 24 24.6 6 12h36z"/><path fill="#4285F4" d="M42 12v24H30V20.4z"/><path fill="#34A853" d="M18 20.4V36H6V12z"/><path fill="#FBBC05" d="M6 36V12l18 12.6z"/></svg>
+          Gmail
+        </a>
+        <a class="mail-provider-btn" href="https://outlook.live.com/mail/inbox" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#0078D4"/><path fill="#fff" d="M15 15a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/><path fill="#fff" d="M27 16h13v2.5l-8 5.5 8 5.5V32H27v-2.5l8-5.5-8-5.5z"/></svg>
+          Outlook
+        </a>
+        <a class="mail-provider-btn" href="https://mail.yahoo.com" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#6001D2"/><path fill="#fff" d="M10 13h8l6 11 6-11h8L26 33v9h-6v-9z"/></svg>
+          Yahoo
+        </a>
+        <a class="mail-provider-btn" href="https://mail.proton.me" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="6" fill="#6D4AFF"/><path fill="#fff" d="M10 13h16c5.5 0 10 4.5 10 10s-4.5 10-10 10H22v8h-6V13h-6zm12 6v8h4a4 4 0 0 0 0-8h-4z"/></svg>
+          Proton
+        </a>
+      </div>
+      <button class="mail-fab" id="mailFab" title="Consulter mes réponses de stage" aria-label="Consulter mes réponses de stage">
+        <!-- inbox tray icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+          <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+        </svg>
+        <span>Mes réponses</span>
+      </button>
+    </div>
+
     <script src="app.js"></script>
   </body>
 </html>
