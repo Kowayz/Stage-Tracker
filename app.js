@@ -60,16 +60,18 @@ const LINK_ICONS = {
 };
 
 let fpAppliedDate; // Flatpickr instance
+let _prevGoalReached = false;
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let state = {
   candidatures: [],
-  view: "list", // 'list' | 'kanban'
+  view: "list", // 'list' | 'kanban' | 'timeline'
   sortCol: "appliedDate",
   sortDir: "desc",
   filters: { status: "", sector: "", priority: "", search: "" },
   editId: null,
   deleteId: null,
+  presentationMode: false,
 };
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -308,7 +310,16 @@ function renderList() {
 
   if (list.length === 0) {
     tbody.innerHTML = "";
-    empty.style.display = "block";
+    const noData    = document.getElementById("emptyNoData");
+    const noResults = document.getElementById("emptyNoResults");
+    if (state.candidatures.length === 0) {
+      if (noData)    noData.style.display    = "";
+      if (noResults) noResults.style.display = "none";
+    } else {
+      if (noData)    noData.style.display    = "none";
+      if (noResults) noResults.style.display = "";
+    }
+    empty.style.display = "flex";
     return;
   }
   empty.style.display = "none";
@@ -330,6 +341,15 @@ function renderList() {
          </span>`
       : `<span style="color:var(--text-muted)">—</span>`;
 
+    // Relance badge: si statut "en attente" depuis + de 7 jours
+    const daysSince = c.appliedDate
+      ? Math.floor((Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) / 86400000)
+      : null;
+    const needsRelance = ["Postulé", "Relance"].includes(c.status) && daysSince !== null && daysSince >= 7;
+    const relanceBadge = needsRelance
+      ? `<span class="relance-badge" title="${daysSince} jours sans réponse">⏰ ${daysSince}j</span>`
+      : "";
+
     return `
     <tr data-status="${escHtml(c.status)}">
       <td class="company-cell">
@@ -345,11 +365,14 @@ function renderList() {
       <td>${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : `<span style="color:var(--text-muted)">—</span>`}</td>
       <td><span class="status-badge status-${slugify(c.status)}">${escHtml(c.status)}</span></td>
       <td><span class="priority-badge priority-${slugify(c.priority)}">${PRIORITY_ICONS[c.priority] || ""} ${escHtml(c.priority)}</span></td>
-      <td class="date-cell">${formatDate(c.appliedDate)}</td>
+      <td class="date-cell">${formatDate(c.appliedDate)}${relanceBadge}</td>
       <td class="contact-cell">${contactHtml}</td>
       <td class="actions-cell">
         ${c.link ? `<button class="btn-icon link" onclick="openLink('${escHtml(c.link)}')" title="Voir l'offre">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </button>` : ""}
+        ${c.notes ? `<button class="btn-icon notes" onclick="openNotesModal('${c.id}')" title="Voir les notes">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </button>` : ""}
         <button class="btn-icon edit" onclick="openEdit('${c.id}')" title="Modifier">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -427,6 +450,69 @@ function renderKanban() {
   }).join("");
 }
 
+// ─── RENDER TIMELINE ──────────────────────────────────────────────────────────
+function renderTimeline() {
+  const list      = getFiltered();
+  const container = document.getElementById("timelineContainer");
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="timeline-empty">Aucune candidature à afficher.</div>`;
+    return;
+  }
+
+  // Sort all by date desc
+  const sorted = [...list].sort((a, b) => {
+    const da = a.appliedDate || a.createdAt?.slice(0, 10) || "";
+    const db = b.appliedDate || b.createdAt?.slice(0, 10) || "";
+    return db.localeCompare(da);
+  });
+
+  // Group by year-month key
+  const groups = {};
+  sorted.forEach(c => {
+    const raw = c.appliedDate || c.createdAt?.slice(0, 10) || "";
+    const key = raw ? raw.slice(0, 7) : "sans-date";
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(c);
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+
+  container.innerHTML = sortedKeys.map(key => {
+    const items = groups[key];
+    const label = key === "sans-date" ? "Sans date" : (() => {
+      const [year, month] = key.split("-");
+      return new Date(+year, +month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+    })();
+
+    return `
+      <div class="timeline-group">
+        <div class="timeline-month-label">
+          ${label} <span class="timeline-count">${items.length}</span>
+        </div>
+        <div class="timeline-items">
+          ${items.map(c => `
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:${STATUS_COLORS[c.status] || "var(--border)"}"></div>
+              <div class="timeline-card" onclick="openEdit('${c.id}')">
+                <div class="timeline-card-top">
+                  <div class="timeline-card-company">${escHtml(c.company)}</div>
+                  <span class="status-badge status-${slugify(c.status)}">${escHtml(c.status)}</span>
+                </div>
+                <div class="timeline-card-position">${escHtml(c.position)}</div>
+                <div class="timeline-card-meta">
+                  ${c.location ? `<span>📍 ${escHtml(c.location)}</span>` : ""}
+                  ${c.appliedDate ? `<span>${formatDate(c.appliedDate)}</span>` : ""}
+                  ${c.priority ? `<span>${escHtml(c.priority)}</span>` : ""}
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>`;
+  }).join("");
+}
+
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
 function dragCard(event, id) {
   event.dataTransfer.setData("text/plain", id);
@@ -452,8 +538,9 @@ function dropCard(event, newStatus) {
 function render() {
   updateKPIs();
   updateSectorFilter();
-  if (state.view === "list") renderList();
-  else renderKanban();
+  if      (state.view === "list")     renderList();
+  else if (state.view === "kanban")   renderKanban();
+  else if (state.view === "timeline") renderTimeline();
   updateSortHeaders();
   renderGoal();
 }
@@ -767,6 +854,139 @@ function exportExcel() {
   showToast("Export Excel amélioré téléchargé !", "success");
 }
 
+// ─── EXPORT PDF ───────────────────────────────────────────────────────────────
+function exportPDF() {
+  if (!window.jspdf) {
+    showToast("Librairie PDF non chargée, réessayez.", "error");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc  = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const list = state.candidatures;
+  const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+
+  const W = doc.internal.pageSize.getWidth();
+
+  // ── Bandeau titre ──
+  doc.setFillColor(62, 42, 41);
+  doc.rect(0, 0, W, 22, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("Stage Tracker", 14, 13);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("Rapport de suivi des candidatures", 14, 19);
+  doc.text(`Généré le ${today}`, W - 14, 19, { align: "right" });
+
+  // ── KPI strip ──
+  const total      = list.length;
+  const enCours    = list.filter(c => !["Refusé","Abandonné","Offre reçue"].includes(c.status)).length;
+  const entretiens = list.filter(c => ["Entretien","Test technique"].includes(c.status)).length;
+  const offres     = list.filter(c => c.status === "Offre reçue").length;
+  const refus      = list.filter(c => c.status === "Refusé").length;
+
+  const kpis = [
+    { label: "Total",      value: total,      color: [62, 42, 41] },
+    { label: "En cours",   value: enCours,    color: [62, 42, 41] },
+    { label: "Entretiens", value: entretiens, color: [109, 40, 217] },
+    { label: "Offres",     value: offres,     color: offres  > 0 ? [21, 128, 61]  : [62, 42, 41] },
+    { label: "Refus",      value: refus,      color: refus   > 0 ? [185, 28, 28]  : [62, 42, 41] },
+  ];
+  const boxW = (W - 28 - (kpis.length - 1) * 4) / kpis.length;
+  kpis.forEach((k, i) => {
+    const x = 14 + i * (boxW + 4);
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(226, 232, 240);
+    doc.roundedRect(x, 26, boxW, 16, 3, 3, "FD");
+    doc.setTextColor(...k.color);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(String(k.value), x + boxW / 2, 36, { align: "center" });
+    doc.setTextColor(148, 163, 184);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text(k.label.toUpperCase(), x + boxW / 2, 40, { align: "center" });
+  });
+
+  // ── Tableau ──
+  const statusFill = {
+    "À postuler":    [241, 245, 249], "Postulé":       [239, 246, 255],
+    "Relance":       [255, 247, 237], "Entretien":     [245, 243, 255],
+    "Test technique":[236, 254, 255], "Offre reçue":   [240, 253, 244],
+    "Refusé":        [254, 242, 242], "Abandonné":     [249, 250, 251],
+  };
+  const statusText = {
+    "À postuler":    [100, 116, 139], "Postulé":       [29, 78, 216],
+    "Relance":       [194, 65, 12],   "Entretien":     [126, 34, 206],
+    "Test technique":[14, 116, 144],  "Offre reçue":   [21, 128, 61],
+    "Refusé":        [185, 28, 28],   "Abandonné":     [156, 163, 175],
+  };
+
+  const tableRows = list.map(c => {
+    const daysSince = c.appliedDate
+      ? Math.floor((Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) / 86400000)
+      : null;
+    const relance = ["Postulé","Relance"].includes(c.status) && daysSince >= 7 ? ` ⏰${daysSince}j` : "";
+    const dateStr = c.appliedDate
+      ? new Date(c.appliedDate + "T00:00:00").toLocaleDateString("fr-FR") + relance
+      : "—";
+    return [c.company, c.position, c.location || "—", c.status, c.priority || "—", dateStr, c.notes || "—"];
+  });
+
+  doc.autoTable({
+    head: [["Entreprise", "Poste", "Lieu", "Statut", "Priorité", "Date", "Notes"]],
+    body: tableRows,
+    startY: 46,
+    margin: { left: 14, right: 14 },
+    styles: { font: "helvetica", fontSize: 8.5, cellPadding: 3.5, overflow: "ellipsize", halign: "left" },
+    headStyles: { fillColor: [62, 42, 41], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 8, halign: "left" },
+    alternateRowStyles: { fillColor: [250, 248, 246] },
+    columnStyles: {
+      0: { fontStyle: "bold", cellWidth: 38 },
+      1: { cellWidth: 46 },
+      2: { cellWidth: 30, textColor: [100, 116, 139] },
+      3: { cellWidth: 28 },
+      4: { cellWidth: 20, halign: "center" },
+      5: { cellWidth: 26, halign: "center", textColor: [100, 116, 139] },
+      6: { cellWidth: "auto", textColor: [148, 163, 184] },
+    },
+    didDrawCell(data) {
+      // Colorise la cellule Statut avec un pill
+      if (data.section === "body" && data.column.index === 3) {
+        const status = data.cell.raw;
+        const fill = statusFill[status] || [248, 250, 252];
+        const text = statusText[status] || [51, 65, 85];
+        const { x, y, width: w, height: h } = data.cell;
+        doc.setFillColor(...fill);
+        doc.roundedRect(x + 1, y + 1.5, w - 2, h - 3, 2, 2, "F");
+        doc.setTextColor(...text);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.text(status, x + w / 2, y + h / 2 + 1, { align: "center" });
+      }
+    },
+  });
+
+  // ── Pied de page ──
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    const yFoot = doc.internal.pageSize.getHeight() - 6;
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, yFoot - 3, W - 14, yFoot - 3);
+    doc.setTextColor(203, 213, 225);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text("Stage Tracker — github.com/Kowayz/Stage-Tracker", 14, yFoot);
+    doc.text(`Page ${p} / ${pageCount}`, W - 14, yFoot, { align: "right" });
+  }
+
+  doc.save(`Stage_Tracker_${new Date().toISOString().slice(0, 10)}.pdf`);
+  showToast("PDF téléchargé !", "success");
+}
+
 // ─── OPEN LINK ────────────────────────────────────────────────────────────────
 function openLink(url) {
   if (url) window.open(url, "_blank", "noopener");
@@ -807,16 +1027,20 @@ function setView(v) {
 
 function updateViewDOM(v) {
   state.view = v;
-  const listSection   = document.getElementById("listView");
-  const kanbanSection = document.getElementById("kanbanView");
-  const btnList   = document.getElementById("btnListView");
-  const btnKanban = document.getElementById("btnKanbanView");
+  const listSection     = document.getElementById("listView");
+  const kanbanSection   = document.getElementById("kanbanView");
+  const timelineSection = document.getElementById("timelineView");
+  const btnList     = document.getElementById("btnListView");
+  const btnKanban   = document.getElementById("btnKanbanView");
+  const btnTimeline = document.getElementById("btnTimelineView");
 
-  listSection.style.display   = v === "list"   ? "" : "none";
-  kanbanSection.style.display = v === "kanban" ? "" : "none";
+  listSection.style.display     = v === "list"     ? "" : "none";
+  kanbanSection.style.display   = v === "kanban"   ? "" : "none";
+  timelineSection.style.display = v === "timeline" ? "" : "none";
 
-  btnList.classList.toggle("active",   v === "list");
-  btnKanban.classList.toggle("active", v === "kanban");
+  btnList?.classList.toggle("active",     v === "list");
+  btnKanban?.classList.toggle("active",   v === "kanban");
+  btnTimeline?.classList.toggle("active", v === "timeline");
 
   render();
 }
@@ -880,7 +1104,16 @@ function renderGoal() {
   if (elBar)    elBar.style.width = pct + "%";
   if (elPct)    elPct.textContent = pct + "%";
   if (elUnit)   elUnit.textContent = period === "day" ? "aujourd'hui" : period === "week" ? "cette semaine" : "ce mois";
-  if (card)     card.classList.toggle("goal-reached", pct >= 100);
+
+  const isReached = pct >= 100;
+  if (card) card.classList.toggle("goal-reached", isReached);
+
+  // Confetti uniquement au moment où l'objectif est atteint
+  if (isReached && !_prevGoalReached) {
+    launchConfetti();
+    showToast("🎉 Objectif atteint !", "success");
+  }
+  _prevGoalReached = isReached;
 
   document.querySelectorAll(".goal-period-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.period === period);
@@ -930,6 +1163,67 @@ function initGoal() {
       if (e.key === "Escape") { input.replaceWith(targetEl); }
     });
   });
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const container = document.getElementById("confettiContainer");
+  if (!container) return;
+  const colors = ["#3E2A29", "#A1887F", "#66BB6A", "#FFB74D", "#8D6E63", "#DEC7BE", "#EF5350", "#3b82f6"];
+  container.innerHTML = "";
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement("div");
+    p.className = "confetti-piece";
+    p.style.cssText = [
+      `left:${(Math.random() * 100).toFixed(1)}%`,
+      `background:${colors[Math.floor(Math.random() * colors.length)]}`,
+      `animation-delay:${(Math.random() * 0.7).toFixed(2)}s`,
+      `animation-duration:${(1.2 + Math.random() * 1.4).toFixed(2)}s`,
+      `width:${(4 + Math.random() * 7).toFixed(0)}px`,
+      `height:${(4 + Math.random() * 7).toFixed(0)}px`,
+      `border-radius:${Math.random() > 0.5 ? "50%" : "2px"}`,
+      `transform:rotate(${(Math.random() * 360).toFixed(0)}deg)`,
+    ].join(";");
+    container.appendChild(p);
+  }
+  setTimeout(() => { container.innerHTML = ""; }, 2800);
+}
+
+// ─── NOTES MODAL ─────────────────────────────────────────────────────────────
+function openNotesModal(id) {
+  const c = state.candidatures.find(x => x.id === id);
+  if (!c || !c.notes) return;
+
+  document.getElementById("notesTitle").textContent = c.company;
+  document.getElementById("notesCompany").textContent = c.position;
+  document.getElementById("notesBody").innerHTML =
+    `<p>${escHtml(c.notes)}</p>`;
+
+  const editBtn = document.getElementById("notesBtnEdit");
+  if (editBtn) editBtn.onclick = () => { closeNotesModal(); openEdit(id); };
+
+  openModal("notesOverlay");
+}
+
+function closeNotesModal() {
+  closeModal("notesOverlay");
+}
+
+// ─── PRESENTATION MODE ────────────────────────────────────────────────────────
+function initPresentation() {
+  const btn     = document.getElementById("btnPresentation");
+  const btnQuit = document.getElementById("btnQuitPresentation");
+  if (btn)     btn.addEventListener("click",     () => togglePresentation(true));
+  if (btnQuit) btnQuit.addEventListener("click", () => togglePresentation(false));
+}
+
+function togglePresentation(active) {
+  state.presentationMode = active;
+  document.body.classList.toggle("presentation-mode", active);
+  const banner = document.getElementById("presentationBanner");
+  const btn    = document.getElementById("btnPresentation");
+  if (banner) banner.style.display = active ? "flex" : "none";
+  if (btn)    btn.classList.toggle("active", active);
 }
 
 // ─── PROFILE PANEL ───────────────────────────────────────────────────────────
@@ -1000,6 +1294,7 @@ function init() {
   initGoal();
   initMailFab();
   initProfilePanel();
+  initPresentation();
   updateHeaderDate();
   render();
 
@@ -1020,12 +1315,9 @@ function init() {
   document.getElementById("btnAdd").addEventListener("click", openAdd);
 
   // View toggle
-  document
-    .getElementById("btnListView")
-    .addEventListener("click", () => setView("list"));
-  document
-    .getElementById("btnKanbanView")
-    .addEventListener("click", () => setView("kanban"));
+  document.getElementById("btnListView")?.addEventListener("click",     () => setView("list"));
+  document.getElementById("btnKanbanView")?.addEventListener("click",   () => setView("kanban"));
+  document.getElementById("btnTimelineView")?.addEventListener("click", () => setView("timeline"));
 
   // Filters
   document.getElementById("searchInput").addEventListener("input", (e) => {
@@ -1080,11 +1372,36 @@ function init() {
     if (e.target === document.getElementById("deleteOverlay")) closeDelete();
   });
 
-  // Keyboard
+  // Notes modal
+  document.getElementById("notesClose")?.addEventListener("click", closeNotesModal);
+  document.getElementById("notesBtnClose")?.addEventListener("click", closeNotesModal);
+  document.getElementById("notesOverlay")?.addEventListener("click", e => {
+    if (e.target === document.getElementById("notesOverlay")) closeNotesModal();
+  });
+
+  // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
+    const tag = document.activeElement?.tagName;
+    const isEditing = ["INPUT", "TEXTAREA", "SELECT"].includes(tag) || document.activeElement?.isContentEditable;
+    const anyOpen   = document.querySelector(".modal-overlay.open") ||
+                      document.getElementById("profilePanel")?.classList.contains("open");
+
     if (e.key === "Escape") {
       closeAdd();
       closeDelete();
+      closeNotesModal();
+      if (state.presentationMode) togglePresentation(false);
+    }
+
+    if (!isEditing && !anyOpen) {
+      if ((e.key === "n" || e.key === "N") && !state.presentationMode) {
+        e.preventDefault();
+        openAdd();
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        document.getElementById("searchInput")?.focus();
+      }
     }
   });
 
@@ -1109,6 +1426,9 @@ function initDataManagement() {
   
   const btnExpCSV = document.getElementById("btnExportCSV");
   if(btnExpCSV) btnExpCSV.addEventListener("click", exportExcel);
+
+  const btnExpPDF = document.getElementById("btnExportPDF");
+  if(btnExpPDF) btnExpPDF.addEventListener("click", exportPDF);
 }
 
 function exportJSON() {
