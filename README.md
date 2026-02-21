@@ -6,7 +6,7 @@
 
 *Gardez le contrôle sur toute votre recherche d'emploi, quel que soit le type de contrat*
 
-<img width="1919" height="893" alt="Dashboard Stage Tracker" src="https://github.com/user-attachments/assets/47c5e355-b96f-4bd9-88e4-34474d16b37b" />
+<img width="1919" height="1293" alt="screencapture-kowayz-github-io-Stage-Tracker-2026-02-21-16_05_11" src="https://github.com/user-attachments/assets/faa9c9c5-15a0-476d-ab3d-b25df49cc4fb" />
 
 </div>
 
