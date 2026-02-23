@@ -1855,6 +1855,9 @@ span.flatpickr-weekday {
   font-size: 10px;
   color: var(--text-muted);
   margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kanban-card-footer {

@@ -415,9 +415,9 @@ function renderKanban() {
               <div class="kanban-card" draggable="true" data-id="${c.id}"
                    ondragstart="dragCard(event,'${c.id}')" ondragend="this.classList.remove('dragging')"
                    onclick="openEdit('${c.id}')">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                  <div class="company-logo" style="width:28px;height:28px;font-size:11px;">${initial}</div>
-                  <div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;min-width:0;">
+                  <div class="company-logo" style="width:28px;height:28px;font-size:11px;flex-shrink:0;">${initial}</div>
+                  <div style="min-width:0;overflow:hidden;flex:1;">
                     <div class="kanban-card-company" style="margin:0">${escHtml(c.company)}</div>
                     <div class="kanban-card-position" style="margin:0">${escHtml(c.position)}</div>
                   </div>
