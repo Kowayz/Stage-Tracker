@@ -41,6 +41,18 @@ const PRIORITY_ICONS = { Haute: "🔴", Moyenne: "🟡", Basse: "🟢" };
 
 
 const GOAL_KEY = "stageTracker_goal";
+const TAGS_KEY = "stageTracker_tags";
+
+const TAG_PALETTE = [
+  "#ef4444", // rouge
+  "#f97316", // orange
+  "#eab308", // jaune
+  "#22c55e", // vert
+  "#3b82f6", // bleu
+  "#8b5cf6", // violet
+  "#ec4899", // rose
+  "#6b7280", // gris
+];
 
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
 const PROFILE = {
@@ -65,13 +77,18 @@ let _prevGoalReached = false;
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let state = {
   candidatures: [],
-  view: "list", // 'list' | 'kanban' | 'timeline'
+  tags: [],
+  view: "list", // 'list' | 'kanban' | 'timeline' | 'agenda'
   sortCol: "appliedDate",
   sortDir: "desc",
   filters: { status: "", sector: "", priority: "", search: "" },
   editId: null,
   deleteId: null,
   presentationMode: false,
+  formSelectedTags: [],
+  pendingAdd: null,
+  agendaYear: new Date().getFullYear(),
+  agendaMonth: new Date().getMonth(),
 };
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -187,9 +204,24 @@ function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     state.candidatures = raw ? JSON.parse(raw) : [];
+    // Migration : ajouter tags:[] aux anciennes entrées
+    state.candidatures.forEach(c => { if (!c.tags) c.tags = []; });
   } catch {
     state.candidatures = [];
   }
+}
+
+function loadTags() {
+  try {
+    const raw = localStorage.getItem(TAGS_KEY);
+    state.tags = raw ? JSON.parse(raw) : [];
+  } catch {
+    state.tags = [];
+  }
+}
+
+function saveTags() {
+  localStorage.setItem(TAGS_KEY, JSON.stringify(state.tags));
 }
 
 function saveData() {
@@ -362,7 +394,12 @@ function renderList() {
         </div>
       </td>
       <td class="location-cell">${locationHtml}</td>
-      <td>${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : `<span style="color:var(--text-muted)">—</span>`}</td>
+      <td>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:3px">
+          ${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : `<span style="color:var(--text-muted)">—</span>`}
+          ${c.tags && c.tags.length ? renderTagPills(c.tags) : ""}
+        </div>
+      </td>
       <td><span class="status-badge status-${slugify(c.status)}">${escHtml(c.status)}</span></td>
       <td><span class="priority-badge priority-${slugify(c.priority)}">${PRIORITY_ICONS[c.priority] || ""} ${escHtml(c.priority)}</span></td>
       <td class="date-cell">${formatDate(c.appliedDate)}${relanceBadge}</td>
@@ -423,6 +460,7 @@ function renderKanban() {
                   </div>
                 </div>
                 ${c.location ? `<div class="kanban-card-location">📍 ${escHtml(c.location)}</div>` : ""}
+                ${c.tags && c.tags.length ? `<div class="kanban-card-tags">${renderTagPills(c.tags)}</div>` : ""}
                 <div class="kanban-card-footer">
                   <span class="kanban-card-date">${formatDate(c.appliedDate)}</span>
                   <div class="kanban-card-actions" onclick="event.stopPropagation()">
@@ -541,8 +579,11 @@ function render() {
   if      (state.view === "list")     renderList();
   else if (state.view === "kanban")   renderKanban();
   else if (state.view === "timeline") renderTimeline();
+  else if (state.view === "agenda")   renderAgenda();
   updateSortHeaders();
   renderGoal();
+  calcStreaks();
+  renderHeatmap();
 }
 
 function updateSortHeaders() {
@@ -554,14 +595,108 @@ function updateSortHeaders() {
   });
 }
 
+// ─── TAGS ─────────────────────────────────────────────────────────────────────
+function renderTagPicker() {
+  const wrap = document.getElementById("tagPickerWrap");
+  if (!wrap) return;
+
+  const selectedIds = state.formSelectedTags;
+
+  let html = state.tags.map(tag => {
+    const isSelected = selectedIds.includes(tag.id);
+    const textColor = getTagTextColor(tag.color);
+    return `<span
+      class="tag-picker-item${isSelected ? " selected" : ""}"
+      style="background:${tag.color}20;color:${tag.color};border-color:${isSelected ? tag.color : "transparent"}"
+      onclick="toggleFormTag('${tag.id}')"
+      title="${escHtml(tag.label)}"
+    >${escHtml(tag.label)}</span>`;
+  }).join("");
+
+  html += `<button type="button" class="tag-new-btn" id="btnNewTag" onclick="showTagCreateForm()">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nouveau tag
+  </button>`;
+
+  wrap.innerHTML = html;
+}
+
+function toggleFormTag(tagId) {
+  const idx = state.formSelectedTags.indexOf(tagId);
+  if (idx === -1) state.formSelectedTags.push(tagId);
+  else state.formSelectedTags.splice(idx, 1);
+  renderTagPicker();
+}
+
+function showTagCreateForm() {
+  const wrap = document.getElementById("tagPickerWrap");
+  if (!wrap || wrap.querySelector(".tag-create-inline")) return;
+
+  let selectedColor = TAG_PALETTE[0];
+
+  const div = document.createElement("div");
+  div.className = "tag-create-inline";
+  div.innerHTML = `
+    <input type="text" id="tagLabelInput" placeholder="Nom du tag…" maxlength="20" style="width:100px"/>
+    <div style="display:flex;gap:4px;align-items:center">
+      ${TAG_PALETTE.map((c, i) => `<span class="tag-color-swatch${i === 0 ? " active" : ""}" style="background:${c}" data-color="${c}" onclick="selectTagColor('${c}',this)"></span>`).join("")}
+    </div>
+    <button type="button" class="tag-create-confirm" onclick="saveNewTag()">OK</button>
+  `;
+  div.style.marginTop = "6px";
+  wrap.appendChild(div);
+  div.querySelector("#tagLabelInput")?.focus();
+}
+
+function selectTagColor(color, el) {
+  document.querySelectorAll(".tag-color-swatch").forEach(s => s.classList.remove("active"));
+  el.classList.add("active");
+  // store in a temp var on the form
+  const input = document.getElementById("tagLabelInput");
+  if (input) input.dataset.selectedColor = color;
+}
+
+function saveNewTag() {
+  const input = document.getElementById("tagLabelInput");
+  if (!input) return;
+  const label = input.value.trim();
+  if (!label) { input.focus(); return; }
+
+  // get selected color from active swatch
+  const activeSwatch = document.querySelector(".tag-color-swatch.active");
+  const color = activeSwatch ? activeSwatch.dataset.color : TAG_PALETTE[0];
+
+  const tag = { id: uid(), label, color };
+  state.tags.push(tag);
+  saveTags();
+  state.formSelectedTags.push(tag.id);
+  renderTagPicker();
+}
+
+function getTagTextColor(hex) {
+  // Always return the hex itself (used as text color on light bg)
+  return hex;
+}
+
+function renderTagPills(tagIds) {
+  if (!tagIds || tagIds.length === 0) return "";
+  return tagIds.map(id => {
+    const tag = state.tags.find(t => t.id === id);
+    if (!tag) return "";
+    return `<span class="tag-pill" style="background:${tag.color}20;color:${tag.color}">${escHtml(tag.label)}</span>`;
+  }).join("");
+}
+
 // ─── MODAL ADD/EDIT ───────────────────────────────────────────────────────────
 function openAdd() {
   state.editId = null;
+  state.formSelectedTags = [];
   document.getElementById("modalTitle").textContent = "Nouvelle candidature";
   document.getElementById("formSubmit").textContent = "Ajouter";
   document.getElementById("candidatureForm").reset();
   document.getElementById("formId").value = "";
   if (fpAppliedDate) fpAppliedDate.setDate(new Date(), false);
+  renderTagPicker();
   openModal("modalOverlay");
 }
 
@@ -569,6 +704,7 @@ function openEdit(id) {
   const c = state.candidatures.find((x) => x.id === id);
   if (!c) return;
   state.editId = id;
+  state.formSelectedTags = [...(c.tags || [])];
   document.getElementById("modalTitle").textContent = "Modifier la candidature";
   document.getElementById("formSubmit").textContent = "Enregistrer";
   document.getElementById("formId").value = c.id;
@@ -584,6 +720,7 @@ function openEdit(id) {
   document.getElementById("formContactName").value = c.contactName || "";
   document.getElementById("formContactEmail").value = c.contactEmail || "";
   document.getElementById("formNotes").value = c.notes || "";
+  renderTagPicker();
   openModal("modalOverlay");
 }
 
@@ -643,7 +780,6 @@ function handleFormSubmit(e) {
     position,
     location:     document.getElementById("formLocation").value.trim(),
     sector: document.getElementById("formSector").value.trim(),
-
     type: document.getElementById("formType").value,
     status: document.getElementById("formStatus").value,
     priority: document.getElementById("formPriority").value,
@@ -652,6 +788,7 @@ function handleFormSubmit(e) {
     contactName: document.getElementById("formContactName").value.trim(),
     contactEmail: document.getElementById("formContactEmail").value.trim(),
     notes: document.getElementById("formNotes").value.trim(),
+    tags: [...state.formSelectedTags],
   };
 
   if (state.editId) {
@@ -661,6 +798,19 @@ function handleFormSubmit(e) {
       showToast(`Candidature chez ${company} mise à jour !`, "success");
     }
   } else {
+    // Détection de doublons
+    const dup = state.candidatures.find(c =>
+      c.company.toLowerCase().trim() === company.toLowerCase() &&
+      c.position.toLowerCase().trim() === position.toLowerCase()
+    );
+    if (dup) {
+      state.pendingAdd = data;
+      document.getElementById("dupCompanyName").textContent = company;
+      document.getElementById("dupPositionName").textContent = position;
+      openModal("dupOverlay");
+      return;
+    }
+
     state.candidatures.unshift({
       id: uid(),
       createdAt: new Date().toISOString(),
@@ -672,6 +822,26 @@ function handleFormSubmit(e) {
   saveData();
   render();
   closeAdd();
+}
+
+function confirmDuplicate() {
+  if (!state.pendingAdd) return;
+  state.candidatures.unshift({
+    id: uid(),
+    createdAt: new Date().toISOString(),
+    ...state.pendingAdd,
+  });
+  showToast(`Candidature chez ${state.pendingAdd.company} ajoutée !`, "success");
+  state.pendingAdd = null;
+  closeModal("dupOverlay");
+  saveData();
+  render();
+  closeAdd();
+}
+
+function closeDupOverlay() {
+  state.pendingAdd = null;
+  closeModal("dupOverlay");
 }
 
 // ─── EXPORT EXCEL ─────────────────────────────────────────────────────────────
@@ -1018,6 +1188,195 @@ function updateHeaderDate() {
   });
 }
 
+// ─── HEATMAP + STREAKS ────────────────────────────────────────────────────────
+function calcStreaks() {
+  const pad = n => String(n).padStart(2, "0");
+  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+  const datesWithApp = new Set(
+    state.candidatures
+      .map(c => (c.appliedDate || "").slice(0, 10))
+      .filter(Boolean)
+  );
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Current streak
+  let current = 0;
+  const cursor = new Date(today);
+  while (datesWithApp.has(toKey(cursor))) {
+    current++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  // Best streak — iterate over all dates between first app and today
+  let best = 0;
+  let streak = 0;
+  if (datesWithApp.size > 0) {
+    const sorted = [...datesWithApp].sort();
+    const start = new Date(sorted[0] + "T00:00:00");
+    const end = new Date(today);
+    const d = new Date(start);
+    while (d <= end) {
+      if (datesWithApp.has(toKey(d))) {
+        streak++;
+        if (streak > best) best = streak;
+      } else {
+        streak = 0;
+      }
+      d.setDate(d.getDate() + 1);
+    }
+  }
+
+  const elCurrent = document.getElementById("streakCurrent");
+  const elBest    = document.getElementById("streakBest");
+  if (elCurrent) elCurrent.textContent = current;
+  if (elBest)    elBest.textContent    = best;
+}
+
+function renderHeatmap() {
+  const grid = document.getElementById("heatmapGrid");
+  if (!grid) return;
+
+  const pad = n => String(n).padStart(2, "0");
+  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+  // Count per day
+  const countMap = {};
+  state.candidatures.forEach(c => {
+    const k = (c.appliedDate || "").slice(0, 10);
+    if (k) countMap[k] = (countMap[k] || 0) + 1;
+  });
+
+  // Build 52 weeks (364 days) back from today, starting on Monday
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  // Align to Monday (start of current week) + go back 51 more weeks
+  const dow = today.getDay(); // 0=Sun
+  const daysToMonday = dow === 0 ? 6 : dow - 1;
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - daysToMonday - 51 * 7);
+
+  const cells = [];
+  const d = new Date(startDate);
+  const endDate = new Date(today);
+  endDate.setDate(today.getDate() + (6 - (dow === 0 ? 6 : dow - 1))); // end of current week
+
+  while (d <= endDate) {
+    const key = toKey(d);
+    const count = countMap[key] || 0;
+    const level = count === 0 ? 0 : count === 1 ? 1 : count === 2 ? 2 : 3;
+    const label = d.toLocaleDateString("fr-FR", { day:"2-digit", month:"short", year:"numeric" });
+    const tip = count === 0 ? `Aucune — ${label}` : `${count} candidature${count > 1 ? "s" : ""} — ${label}`;
+    cells.push(`<div class="heatmap-cell" data-count="${level}" title="${tip}"></div>`);
+    d.setDate(d.getDate() + 1);
+  }
+
+  const numCols = Math.ceil(cells.length / 7);
+  const colTemplate = `repeat(${numCols}, 1fr)`;
+  grid.style.gridTemplateColumns = colTemplate;
+  grid.innerHTML = cells.join("");
+
+  // Labels de mois
+  const monthsEl = document.getElementById("heatmapMonths");
+  if (monthsEl) {
+    monthsEl.style.gridTemplateColumns = colTemplate;
+    let monthHtml = "";
+    let lastMonth = -1;
+    for (let col = 0; col < numCols; col++) {
+      const colDate = new Date(startDate);
+      colDate.setDate(startDate.getDate() + col * 7);
+      const m = colDate.getMonth();
+      if (m !== lastMonth) {
+        lastMonth = m;
+        const label = colDate.toLocaleDateString("fr-FR", { month: "short" });
+        monthHtml += `<div class="heatmap-month-label">${label}</div>`;
+      } else {
+        monthHtml += `<div></div>`;
+      }
+    }
+    monthsEl.innerHTML = monthHtml;
+  }
+}
+
+// ─── AGENDA / CALENDRIER ──────────────────────────────────────────────────────
+function renderAgenda() {
+  const grid  = document.getElementById("agendaGrid");
+  const title = document.getElementById("agendaMonthTitle");
+  if (!grid || !title) return;
+
+  const year  = state.agendaYear;
+  const month = state.agendaMonth;
+
+  title.textContent = new Date(year, month, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+  // Day headers (Mon–Sun)
+  const dayNames = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+  let html = dayNames.map(d => `<div class="agenda-day-header">${d}</div>`).join("");
+
+  // First day of month (adjusted to Monday = 0)
+  const firstDay = new Date(year, month, 1);
+  const startDow = firstDay.getDay(); // 0=Sun
+  const offset = startDow === 0 ? 6 : startDow - 1; // how many empty cells before day 1
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const pad = n => String(n).padStart(2, "0");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayKey = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+
+  // Build count map filtered by candidatures
+  const countMap = {};
+  const candMap = {};
+  state.candidatures.forEach(c => {
+    const k = (c.appliedDate || "").slice(0, 10);
+    if (k) {
+      if (!candMap[k]) candMap[k] = [];
+      candMap[k].push(c);
+    }
+  });
+
+  // Prev month fill
+  for (let i = 0; i < offset; i++) {
+    const d = daysInPrevMonth - offset + 1 + i;
+    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${d}</span></div>`;
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${pad(month+1)}-${pad(d)}`;
+    const isToday = key === todayKey;
+    const cands = candMap[key] || [];
+
+    let eventsHtml = "";
+    const maxShow = 3;
+    cands.slice(0, maxShow).forEach(c => {
+      const color = STATUS_COLORS[c.status] || "var(--primary)";
+      eventsHtml += `<div class="agenda-event" style="background:${color}22;color:${color}" onclick="event.stopPropagation();openEdit('${c.id}')" title="${escHtml(c.company)} — ${escHtml(c.position)}">${escHtml(c.company)}</div>`;
+    });
+    if (cands.length > maxShow) {
+      eventsHtml += `<div class="agenda-event-more">+${cands.length - maxShow} autre${cands.length - maxShow > 1 ? "s" : ""}</div>`;
+    }
+
+    html += `<div class="agenda-day${isToday ? " today" : ""}">
+      <span class="agenda-day-num">${d}</span>
+      ${eventsHtml}
+    </div>`;
+  }
+
+  // Next month fill
+  const totalCells = offset + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for (let d = 1; d <= remaining; d++) {
+    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${d}</span></div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
 // ─── VIEW TOGGLE ──────────────────────────────────────────────────────────────
 function setView(v) {
   if (document.startViewTransition) {
@@ -1032,17 +1391,21 @@ function updateViewDOM(v) {
   const listSection     = document.getElementById("listView");
   const kanbanSection   = document.getElementById("kanbanView");
   const timelineSection = document.getElementById("timelineView");
+  const agendaSection   = document.getElementById("agendaView");
   const btnList     = document.getElementById("btnListView");
   const btnKanban   = document.getElementById("btnKanbanView");
   const btnTimeline = document.getElementById("btnTimelineView");
+  const btnAgenda   = document.getElementById("btnAgendaView");
 
   listSection.style.display     = v === "list"     ? "" : "none";
   kanbanSection.style.display   = v === "kanban"   ? "" : "none";
   timelineSection.style.display = v === "timeline" ? "" : "none";
+  if (agendaSection) agendaSection.style.display = v === "agenda" ? "" : "none";
 
   btnList?.classList.toggle("active",     v === "list");
   btnKanban?.classList.toggle("active",   v === "kanban");
   btnTimeline?.classList.toggle("active", v === "timeline");
+  btnAgenda?.classList.toggle("active",   v === "agenda");
 
   render();
 }
@@ -1292,6 +1655,7 @@ function initMailFab() {
 // ─── INIT ──────────────────────────────────────────────────────────────────
 function init() {
   loadData();
+  loadTags();
   initTheme();
   initGoal();
   initMailFab();
@@ -1313,6 +1677,23 @@ function init() {
   }
   checkExportFreshness(); // Backup Alert
 
+  // Sidebar toggle (mobile)
+  const sidebarToggle   = document.getElementById("sidebarToggle");
+  const sidebarEl       = document.getElementById("appSidebar");
+  const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+  if (sidebarToggle && sidebarEl) {
+    sidebarToggle.addEventListener("click", () => {
+      const open = sidebarEl.classList.toggle("open");
+      if (sidebarBackdrop) sidebarBackdrop.classList.toggle("open", open);
+    });
+    if (sidebarBackdrop) {
+      sidebarBackdrop.addEventListener("click", () => {
+        sidebarEl.classList.remove("open");
+        sidebarBackdrop.classList.remove("open");
+      });
+    }
+  }
+
   // Header buttons
   document.getElementById("btnAdd").addEventListener("click", openAdd);
 
@@ -1320,6 +1701,19 @@ function init() {
   document.getElementById("btnListView")?.addEventListener("click",     () => setView("list"));
   document.getElementById("btnKanbanView")?.addEventListener("click",   () => setView("kanban"));
   document.getElementById("btnTimelineView")?.addEventListener("click", () => setView("timeline"));
+  document.getElementById("btnAgendaView")?.addEventListener("click",   () => setView("agenda"));
+
+  // Agenda navigation
+  document.getElementById("agendaPrev")?.addEventListener("click", () => {
+    state.agendaMonth--;
+    if (state.agendaMonth < 0) { state.agendaMonth = 11; state.agendaYear--; }
+    renderAgenda();
+  });
+  document.getElementById("agendaNext")?.addEventListener("click", () => {
+    state.agendaMonth++;
+    if (state.agendaMonth > 11) { state.agendaMonth = 0; state.agendaYear++; }
+    renderAgenda();
+  });
 
   // Filters
   document.getElementById("searchInput").addEventListener("input", (e) => {
@@ -1381,6 +1775,14 @@ function init() {
     if (e.target === document.getElementById("notesOverlay")) closeNotesModal();
   });
 
+  // Duplicate overlay
+  document.getElementById("dupClose")?.addEventListener("click", closeDupOverlay);
+  document.getElementById("dupCancelBtn")?.addEventListener("click", closeDupOverlay);
+  document.getElementById("dupConfirmBtn")?.addEventListener("click", confirmDuplicate);
+  document.getElementById("dupOverlay")?.addEventListener("click", e => {
+    if (e.target === document.getElementById("dupOverlay")) closeDupOverlay();
+  });
+
   // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
     const tag = document.activeElement?.tagName;
@@ -1392,6 +1794,7 @@ function init() {
       closeAdd();
       closeDelete();
       closeNotesModal();
+      closeDupOverlay();
       if (state.presentationMode) togglePresentation(false);
     }
 
