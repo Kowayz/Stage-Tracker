@@ -37,7 +37,11 @@ const STATUS_ICONS = {
   Abandonné:       "🗑️",
 };
 
-const PRIORITY_ICONS = { Haute: "🔴", Moyenne: "🟡", Basse: "🟢" };
+const PRIORITY_ICONS = {
+  Haute:   `<span class="p-dot p-haute"></span>`,
+  Moyenne: `<span class="p-dot p-moyenne"></span>`,
+  Basse:   `<span class="p-dot p-basse"></span>`
+};
 
 
 const GOAL_KEY = "stageTracker_goal";
@@ -379,23 +383,29 @@ function renderList() {
       : null;
     const needsRelance = ["Postulé", "Relance"].includes(c.status) && daysSince !== null && daysSince >= 7;
     const relanceBadge = needsRelance
-      ? `<span class="relance-badge" title="${daysSince} jours sans réponse">⏰ ${daysSince}j</span>`
+      ? `<span class="relance-badge" title="${daysSince} jours sans réponse">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ${daysSince}j
+         </span>`
       : "";
 
     return `
     <tr data-status="${escHtml(c.status)}">
       <td class="company-cell">
-        <div style="display:flex;align-items:center;gap:11px;">
+        <div class="company-row">
           <div class="company-logo">${initial}</div>
-          <div>
-            <div class="cell-company">${escHtml(c.company)}${c.type ? `<span class="type-badge">${escHtml(c.type)}</span>` : ""}</div>
-            <div class="cell-position">${escHtml(c.position)}</div>
+          <div class="company-info">
+            <div class="cell-company">
+              <span class="company-name-text" title="${escHtml(c.company)}">${escHtml(c.company)}</span>
+              ${c.type ? `<span class="type-badge">${escHtml(c.type)}</span>` : ""}
+            </div>
+            <div class="cell-position" title="${escHtml(c.position)}">${escHtml(c.position)}</div>
           </div>
         </div>
       </td>
       <td class="location-cell">${locationHtml}</td>
-      <td>
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:3px">
+      <td class="sector-cell">
+        <div class="sector-tags-wrap">
           ${c.sector ? `<span class="sector-badge">${escHtml(c.sector)}</span>` : `<span style="color:var(--text-muted)">—</span>`}
           ${c.tags && c.tags.length ? renderTagPills(c.tags) : ""}
         </div>
