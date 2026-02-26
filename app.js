@@ -16,33 +16,32 @@ const STATUSES = [
 ];
 
 const STATUS_COLORS = {
-  "À postuler":    "#BCAAA4",
-  Postulé:         "#A1887F",
-  Relance:         "#FFB74D",
-  Entretien:       "#8D6E63",
-  "Test technique":"#795548",
-  "Offre reçue":   "#66BB6A",
-  Refusé:          "#EF5350",
-  Abandonné:       "#D7CCC8",
+  "À postuler": "#BCAAA4",
+  Postulé: "#A1887F",
+  Relance: "#FFB74D",
+  Entretien: "#8D6E63",
+  "Test technique": "#795548",
+  "Offre reçue": "#66BB6A",
+  Refusé: "#EF5350",
+  Abandonné: "#D7CCC8",
 };
 
 const STATUS_ICONS = {
-  "À postuler":    "📝",
-  Postulé:         "📨",
-  Relance:         "🔔",
-  Entretien:       "☕",
-  "Test technique":"💻",
-  "Offre reçue":   "🎉",
-  Refusé:          "⛔",
-  Abandonné:       "🗑️",
+  "À postuler": "📝",
+  Postulé: "📨",
+  Relance: "🔔",
+  Entretien: "☕",
+  "Test technique": "💻",
+  "Offre reçue": "🎉",
+  Refusé: "⛔",
+  Abandonné: "🗑️",
 };
 
 const PRIORITY_ICONS = {
-  Haute:   `<span class="p-dot p-haute"></span>`,
+  Haute: `<span class="p-dot p-haute"></span>`,
   Moyenne: `<span class="p-dot p-moyenne"></span>`,
-  Basse:   `<span class="p-dot p-basse"></span>`
+  Basse: `<span class="p-dot p-basse"></span>`,
 };
-
 
 const GOAL_KEY = "stageTracker_goal";
 const TAGS_KEY = "stageTracker_tags";
@@ -60,19 +59,34 @@ const TAG_PALETTE = [
 
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
 const PROFILE = {
-  name:     "Ethan Geslin",
+  name: "Ethan Geslin",
   initials: "EG",
   links: [
-    { sub: "GitHub",   label: "Kowayz",                   href: "https://github.com/Kowayz",                              icon: "github"   },
-    { sub: "LinkedIn", label: "Ethan Geslin",              href: "https://www.linkedin.com/in/ethan-geslin-7a5a61387/",    icon: "linkedin" },
-    { sub: "Email",    label: "Ethan91330@outlook.com",    href: "mailto:Ethan91330@outlook.com",                         icon: "mail"     },
+    {
+      sub: "GitHub",
+      label: "Kowayz",
+      href: "https://github.com/Kowayz",
+      icon: "github",
+    },
+    {
+      sub: "LinkedIn",
+      label: "Ethan Geslin",
+      href: "https://www.linkedin.com/in/ethan-geslin-7a5a61387/",
+      icon: "linkedin",
+    },
+    {
+      sub: "Email",
+      label: "Ethan91330@outlook.com",
+      href: "mailto:Ethan91330@outlook.com",
+      icon: "mail",
+    },
   ],
 };
 
 const LINK_ICONS = {
-  github:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`,
+  github: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`,
   linkedin: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
-  mail:     `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+  mail: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
 };
 
 let fpAppliedDate; // Flatpickr instance
@@ -102,22 +116,22 @@ function uid() {
 
 // ─── THEME MANAGER ───────────────────────────────────────────────────────────
 const THEME_ICONS = {
-  "cafe":          "☕",
-  "dark":          "☕",
-  "clair":         "🔆",
-  "sombre":        "🌑",
-  "pistache":      "🌿",
+  cafe: "☕",
+  dark: "☕",
+  clair: "🔆",
+  sombre: "🌑",
+  pistache: "🌿",
   "pistache-dark": "🌿",
-  "ocean":         "🌊",
-  "ocean-dark":    "🌊",
-  "pastel":        "🌸",
-  "pastel-dark":   "🌸",
+  ocean: "🌊",
+  "ocean-dark": "🌊",
+  pastel: "🌸",
+  "pastel-dark": "🌸",
 };
 
 function initTheme() {
-  const btn   = document.getElementById("btnThemeToggle");
+  const btn = document.getElementById("btnThemeToggle");
   const panel = document.getElementById("themePickerPanel");
-  const wrap  = document.getElementById("themePickerWrap");
+  const wrap = document.getElementById("themePickerWrap");
   const saved = localStorage.getItem("theme") || "cafe";
   applyTheme(saved);
 
@@ -127,7 +141,7 @@ function initTheme() {
     panel.setAttribute("aria-hidden", String(!open));
   });
 
-  document.querySelectorAll(".theme-swatch").forEach(swatch => {
+  document.querySelectorAll(".theme-swatch").forEach((swatch) => {
     swatch.addEventListener("click", () => {
       const t = swatch.dataset.theme;
       applyTheme(t);
@@ -148,7 +162,7 @@ function initTheme() {
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   updateThemeIcon(theme);
-  document.querySelectorAll(".theme-swatch").forEach(s => {
+  document.querySelectorAll(".theme-swatch").forEach((s) => {
     s.classList.toggle("active", s.dataset.theme === theme);
   });
 }
@@ -166,11 +180,15 @@ function updateLastSaved() {
 function checkExportFreshness() {
   const lastExport = localStorage.getItem("lastExportDate");
   if (!lastExport) return; // Never exported? Maybe warn later.
-  
+
   const daysDiff = (new Date() - new Date(lastExport)) / (1000 * 60 * 60 * 24);
   if (daysDiff > 7) {
     setTimeout(() => {
-      showToast("⚠️ Pensez à exporter vos données (Excel/JSON) !", "warning", 6000);
+      showToast(
+        "⚠️ Pensez à exporter vos données (Excel/JSON) !",
+        "warning",
+        6000,
+      );
     }, 2000);
   }
 }
@@ -209,7 +227,9 @@ function loadData() {
     const raw = localStorage.getItem(STORAGE_KEY);
     state.candidatures = raw ? JSON.parse(raw) : [];
     // Migration : ajouter tags:[] aux anciennes entrées
-    state.candidatures.forEach(c => { if (!c.tags) c.tags = []; });
+    state.candidatures.forEach((c) => {
+      if (!c.tags) c.tags = [];
+    });
   } catch {
     state.candidatures = [];
   }
@@ -346,13 +366,13 @@ function renderList() {
 
   if (list.length === 0) {
     tbody.innerHTML = "";
-    const noData    = document.getElementById("emptyNoData");
+    const noData = document.getElementById("emptyNoData");
     const noResults = document.getElementById("emptyNoResults");
     if (state.candidatures.length === 0) {
-      if (noData)    noData.style.display    = "";
+      if (noData) noData.style.display = "";
       if (noResults) noResults.style.display = "none";
     } else {
-      if (noData)    noData.style.display    = "none";
+      if (noData) noData.style.display = "none";
       if (noResults) noResults.style.display = "";
     }
     empty.style.display = "flex";
@@ -360,36 +380,43 @@ function renderList() {
   }
   empty.style.display = "none";
 
-  tbody.innerHTML = list.map((c) => {
-    const initial = c.company.charAt(0).toUpperCase();
+  tbody.innerHTML = list
+    .map((c) => {
+      const initial = c.company.charAt(0).toUpperCase();
 
-    const locationHtml = c.location
-      ? `<span style="display:inline-flex;align-items:center;gap:5px;">
+      const locationHtml = c.location
+        ? `<span style="display:inline-flex;align-items:center;gap:5px;">
            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
            ${escHtml(c.location)}
          </span>`
-      : `<span style="color:var(--text-muted)">—</span>`;
+        : `<span style="color:var(--text-muted)">—</span>`;
 
-    const contactHtml = c.contactName
-      ? `<span style="display:inline-flex;align-items:center;gap:5px;">
+      const contactHtml = c.contactName
+        ? `<span style="display:inline-flex;align-items:center;gap:5px;">
            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
            ${escHtml(c.contactName)}
          </span>`
-      : `<span style="color:var(--text-muted)">—</span>`;
+        : `<span style="color:var(--text-muted)">—</span>`;
 
-    // Relance badge: si statut "en attente" depuis + de 7 jours
-    const daysSince = c.appliedDate
-      ? Math.floor((Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) / 86400000)
-      : null;
-    const needsRelance = ["Postulé", "Relance"].includes(c.status) && daysSince !== null && daysSince >= 7;
-    const relanceBadge = needsRelance
-      ? `<span class="relance-badge" title="${daysSince} jours sans réponse">
+      // Relance badge: si statut "en attente" depuis + de 7 jours
+      const daysSince = c.appliedDate
+        ? Math.floor(
+            (Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) /
+              86400000,
+          )
+        : null;
+      const needsRelance =
+        ["Postulé", "Relance"].includes(c.status) &&
+        daysSince !== null &&
+        daysSince >= 7;
+      const relanceBadge = needsRelance
+        ? `<span class="relance-badge" title="${daysSince} jours sans réponse">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           ${daysSince}j
          </span>`
-      : "";
+        : "";
 
-    return `
+      return `
     <tr data-status="${escHtml(c.status)}">
       <td class="company-cell">
         <div class="company-row">
@@ -415,12 +442,20 @@ function renderList() {
       <td class="date-cell">${formatDate(c.appliedDate)}${relanceBadge}</td>
       <td class="contact-cell">${contactHtml}</td>
       <td class="actions-cell">
-        ${c.link ? `<button class="btn-icon link" onclick="openLink('${escHtml(c.link)}')" title="Voir l'offre">
+        ${
+          c.link
+            ? `<button class="btn-icon link" onclick="openLink('${escHtml(c.link)}')" title="Voir l'offre">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </button>` : ""}
-        ${c.notes ? `<button class="btn-icon notes" onclick="openNotesModal('${c.id}')" title="Voir les notes">
+        </button>`
+            : ""
+        }
+        ${
+          c.notes
+            ? `<button class="btn-icon notes" onclick="openNotesModal('${c.id}')" title="Voir les notes">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        </button>` : ""}
+        </button>`
+            : ""
+        }
         <button class="btn-icon edit" onclick="openEdit('${c.id}')" title="Modifier">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -429,7 +464,8 @@ function renderList() {
         </button>
       </td>
     </tr>`;
-  }).join("");
+    })
+    .join("");
 }
 
 // ─── RENDER KANBAN ────────────────────────────────────────────────────────────
@@ -455,10 +491,9 @@ function renderKanban() {
             cards.length === 0
               ? '<div style="text-align:center;padding:16px;font-size:12px;color:var(--text-muted)">Aucune</div>'
               : cards
-                  .map(
-                    (c) => {
-                      const initial = c.company.charAt(0).toUpperCase();
-                      return `
+                  .map((c) => {
+                    const initial = c.company.charAt(0).toUpperCase();
+                    return `
               <div class="kanban-card" draggable="true" data-id="${c.id}"
                    ondragstart="dragCard(event,'${c.id}')" ondragend="this.classList.remove('dragging')"
                    onclick="openEdit('${c.id}')">
@@ -488,8 +523,7 @@ function renderKanban() {
                 </div>
               </div>
             `;
-                    }
-                  )
+                  })
                   .join("")
           }
         </div>
@@ -500,7 +534,7 @@ function renderKanban() {
 
 // ─── RENDER TIMELINE ──────────────────────────────────────────────────────────
 function renderTimeline() {
-  const list      = getFiltered();
+  const list = getFiltered();
   const container = document.getElementById("timelineContainer");
 
   if (list.length === 0) {
@@ -517,7 +551,7 @@ function renderTimeline() {
 
   // Group by year-month key
   const groups = {};
-  sorted.forEach(c => {
+  sorted.forEach((c) => {
     const raw = c.appliedDate || c.createdAt?.slice(0, 10) || "";
     const key = raw ? raw.slice(0, 7) : "sans-date";
     if (!groups[key]) groups[key] = [];
@@ -526,20 +560,29 @@ function renderTimeline() {
 
   const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
 
-  container.innerHTML = sortedKeys.map(key => {
-    const items = groups[key];
-    const label = key === "sans-date" ? "Sans date" : (() => {
-      const [year, month] = key.split("-");
-      return new Date(+year, +month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
-    })();
+  container.innerHTML = sortedKeys
+    .map((key) => {
+      const items = groups[key];
+      const label =
+        key === "sans-date"
+          ? "Sans date"
+          : (() => {
+              const [year, month] = key.split("-");
+              return new Date(+year, +month - 1, 1).toLocaleDateString(
+                "fr-FR",
+                { month: "long", year: "numeric" },
+              );
+            })();
 
-    return `
+      return `
       <div class="timeline-group">
         <div class="timeline-month-label">
           ${label} <span class="timeline-count">${items.length}</span>
         </div>
         <div class="timeline-items">
-          ${items.map(c => `
+          ${items
+            .map(
+              (c) => `
             <div class="timeline-item">
               <div class="timeline-dot" style="background:${STATUS_COLORS[c.status] || "var(--border)"}"></div>
               <div class="timeline-card" onclick="openEdit('${c.id}')">
@@ -555,10 +598,13 @@ function renderTimeline() {
                 </div>
               </div>
             </div>
-          `).join("")}
+          `,
+            )
+            .join("")}
         </div>
       </div>`;
-  }).join("");
+    })
+    .join("");
 }
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
@@ -581,15 +627,14 @@ function dropCard(event, newStatus) {
   }
 }
 
-
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 function render() {
   updateKPIs();
   updateSectorFilter();
-  if      (state.view === "list")     renderList();
-  else if (state.view === "kanban")   renderKanban();
+  if (state.view === "list") renderList();
+  else if (state.view === "kanban") renderKanban();
   else if (state.view === "timeline") renderTimeline();
-  else if (state.view === "agenda")   renderAgenda();
+  else if (state.view === "agenda") renderAgenda();
   updateSortHeaders();
   renderGoal();
   calcStreaks();
@@ -612,16 +657,18 @@ function renderTagPicker() {
 
   const selectedIds = state.formSelectedTags;
 
-  let html = state.tags.map(tag => {
-    const isSelected = selectedIds.includes(tag.id);
-    const textColor = getTagTextColor(tag.color);
-    return `<span
+  let html = state.tags
+    .map((tag) => {
+      const isSelected = selectedIds.includes(tag.id);
+      const textColor = getTagTextColor(tag.color);
+      return `<span
       class="tag-picker-item${isSelected ? " selected" : ""}"
       style="background:${tag.color}20;color:${tag.color};border-color:${isSelected ? tag.color : "transparent"}"
       onclick="toggleFormTag('${tag.id}')"
       title="${escHtml(tag.label)}"
     >${escHtml(tag.label)}</span>`;
-  }).join("");
+    })
+    .join("");
 
   html += `<button type="button" class="tag-new-btn" id="btnNewTag" onclick="showTagCreateForm()">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -659,7 +706,9 @@ function showTagCreateForm() {
 }
 
 function selectTagColor(color, el) {
-  document.querySelectorAll(".tag-color-swatch").forEach(s => s.classList.remove("active"));
+  document
+    .querySelectorAll(".tag-color-swatch")
+    .forEach((s) => s.classList.remove("active"));
   el.classList.add("active");
   // store in a temp var on the form
   const input = document.getElementById("tagLabelInput");
@@ -670,7 +719,10 @@ function saveNewTag() {
   const input = document.getElementById("tagLabelInput");
   if (!input) return;
   const label = input.value.trim();
-  if (!label) { input.focus(); return; }
+  if (!label) {
+    input.focus();
+    return;
+  }
 
   // get selected color from active swatch
   const activeSwatch = document.querySelector(".tag-color-swatch.active");
@@ -690,11 +742,13 @@ function getTagTextColor(hex) {
 
 function renderTagPills(tagIds) {
   if (!tagIds || tagIds.length === 0) return "";
-  return tagIds.map(id => {
-    const tag = state.tags.find(t => t.id === id);
-    if (!tag) return "";
-    return `<span class="tag-pill" style="background:${tag.color}20;color:${tag.color}">${escHtml(tag.label)}</span>`;
-  }).join("");
+  return tagIds
+    .map((id) => {
+      const tag = state.tags.find((t) => t.id === id);
+      if (!tag) return "";
+      return `<span class="tag-pill" style="background:${tag.color}20;color:${tag.color}">${escHtml(tag.label)}</span>`;
+    })
+    .join("");
 }
 
 // ─── MODAL ADD/EDIT ───────────────────────────────────────────────────────────
@@ -788,7 +842,7 @@ function handleFormSubmit(e) {
   const data = {
     company,
     position,
-    location:     document.getElementById("formLocation").value.trim(),
+    location: document.getElementById("formLocation").value.trim(),
     sector: document.getElementById("formSector").value.trim(),
     type: document.getElementById("formType").value,
     status: document.getElementById("formStatus").value,
@@ -809,9 +863,10 @@ function handleFormSubmit(e) {
     }
   } else {
     // Détection de doublons
-    const dup = state.candidatures.find(c =>
-      c.company.toLowerCase().trim() === company.toLowerCase() &&
-      c.position.toLowerCase().trim() === position.toLowerCase()
+    const dup = state.candidatures.find(
+      (c) =>
+        c.company.toLowerCase().trim() === company.toLowerCase() &&
+        c.position.toLowerCase().trim() === position.toLowerCase(),
     );
     if (dup) {
       state.pendingAdd = data;
@@ -841,7 +896,10 @@ function confirmDuplicate() {
     createdAt: new Date().toISOString(),
     ...state.pendingAdd,
   });
-  showToast(`Candidature chez ${state.pendingAdd.company} ajoutée !`, "success");
+  showToast(
+    `Candidature chez ${state.pendingAdd.company} ajoutée !`,
+    "success",
+  );
   state.pendingAdd = null;
   closeModal("dupOverlay");
   saveData();
@@ -856,14 +914,20 @@ function closeDupOverlay() {
 
 // ─── EXPORT EXCEL ─────────────────────────────────────────────────────────────
 function exportExcel() {
-  const today = new Date().toLocaleDateString('fr-FR');
+  const today = new Date().toLocaleDateString("fr-FR");
   localStorage.setItem("lastExportDate", new Date().toISOString());
-  
+
   // Calculate Stats
   const total = state.candidatures.length;
-  const inProgress = state.candidatures.filter(c => ['En attente', 'Postulé', 'Relance'].some(s => c.status.includes(s))).length;
-  const interviews = state.candidatures.filter(c => ['Entretien', 'Technique'].some(s => c.status.includes(s))).length;
-  const offers = state.candidatures.filter(c => c.status.includes('Offre')).length;
+  const inProgress = state.candidatures.filter((c) =>
+    ["En attente", "Postulé", "Relance"].some((s) => c.status.includes(s)),
+  ).length;
+  const interviews = state.candidatures.filter((c) =>
+    ["Entretien", "Technique"].some((s) => c.status.includes(s)),
+  ).length;
+  const offers = state.candidatures.filter((c) =>
+    c.status.includes("Offre"),
+  ).length;
 
   const styles = `
     <style>
@@ -974,7 +1038,7 @@ function exportExcel() {
         <td class="summary-td">${total}</td>
         <td class="summary-td">${inProgress}</td>
         <td class="summary-td">${interviews}</td>
-        <td class="summary-td" style="color:${offers > 0 ? '#16a34a' : 'inherit'}">${offers}</td>
+        <td class="summary-td" style="color:${offers > 0 ? "#16a34a" : "inherit"}">${offers}</td>
       </tr>
     </table>
     <br>
@@ -997,7 +1061,7 @@ function exportExcel() {
       <tbody>
   `;
 
-  state.candidatures.forEach(c => {
+  state.candidatures.forEach((c) => {
     const statusClass = `status-${slugify(c.status)}`;
     const statusHtml = `<span class="badge ${statusClass}">${escHtml(c.status)}</span>`;
 
@@ -1044,9 +1108,13 @@ function exportPDF() {
   }
 
   const { jsPDF } = window.jspdf;
-  const doc  = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
   const list = state.candidatures;
-  const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  const today = new Date().toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
   const W = doc.internal.pageSize.getWidth();
 
@@ -1063,18 +1131,30 @@ function exportPDF() {
   doc.text(`Généré le ${today}`, W - 14, 19, { align: "right" });
 
   // ── KPI strip ──
-  const total      = list.length;
-  const enCours    = list.filter(c => !["Refusé","Abandonné","Offre reçue"].includes(c.status)).length;
-  const entretiens = list.filter(c => ["Entretien","Test technique"].includes(c.status)).length;
-  const offres     = list.filter(c => c.status === "Offre reçue").length;
-  const refus      = list.filter(c => c.status === "Refusé").length;
+  const total = list.length;
+  const enCours = list.filter(
+    (c) => !["Refusé", "Abandonné", "Offre reçue"].includes(c.status),
+  ).length;
+  const entretiens = list.filter((c) =>
+    ["Entretien", "Test technique"].includes(c.status),
+  ).length;
+  const offres = list.filter((c) => c.status === "Offre reçue").length;
+  const refus = list.filter((c) => c.status === "Refusé").length;
 
   const kpis = [
-    { label: "Total",      value: total,      color: [62, 42, 41] },
-    { label: "En cours",   value: enCours,    color: [62, 42, 41] },
+    { label: "Total", value: total, color: [62, 42, 41] },
+    { label: "En cours", value: enCours, color: [62, 42, 41] },
     { label: "Entretiens", value: entretiens, color: [109, 40, 217] },
-    { label: "Offres",     value: offres,     color: offres  > 0 ? [21, 128, 61]  : [62, 42, 41] },
-    { label: "Refus",      value: refus,      color: refus   > 0 ? [185, 28, 28]  : [62, 42, 41] },
+    {
+      label: "Offres",
+      value: offres,
+      color: offres > 0 ? [21, 128, 61] : [62, 42, 41],
+    },
+    {
+      label: "Refus",
+      value: refus,
+      color: refus > 0 ? [185, 28, 28] : [62, 42, 41],
+    },
   ];
   const boxW = (W - 28 - (kpis.length - 1) * 4) / kpis.length;
   kpis.forEach((k, i) => {
@@ -1094,36 +1174,73 @@ function exportPDF() {
 
   // ── Tableau ──
   const statusFill = {
-    "À postuler":    [241, 245, 249], "Postulé":       [239, 246, 255],
-    "Relance":       [255, 247, 237], "Entretien":     [245, 243, 255],
-    "Test technique":[236, 254, 255], "Offre reçue":   [240, 253, 244],
-    "Refusé":        [254, 242, 242], "Abandonné":     [249, 250, 251],
+    "À postuler": [241, 245, 249],
+    Postulé: [239, 246, 255],
+    Relance: [255, 247, 237],
+    Entretien: [245, 243, 255],
+    "Test technique": [236, 254, 255],
+    "Offre reçue": [240, 253, 244],
+    Refusé: [254, 242, 242],
+    Abandonné: [249, 250, 251],
   };
   const statusText = {
-    "À postuler":    [100, 116, 139], "Postulé":       [29, 78, 216],
-    "Relance":       [194, 65, 12],   "Entretien":     [126, 34, 206],
-    "Test technique":[14, 116, 144],  "Offre reçue":   [21, 128, 61],
-    "Refusé":        [185, 28, 28],   "Abandonné":     [156, 163, 175],
+    "À postuler": [100, 116, 139],
+    Postulé: [29, 78, 216],
+    Relance: [194, 65, 12],
+    Entretien: [126, 34, 206],
+    "Test technique": [14, 116, 144],
+    "Offre reçue": [21, 128, 61],
+    Refusé: [185, 28, 28],
+    Abandonné: [156, 163, 175],
   };
 
-  const tableRows = list.map(c => {
+  const tableRows = list.map((c) => {
     const daysSince = c.appliedDate
-      ? Math.floor((Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) / 86400000)
+      ? Math.floor(
+          (Date.now() - new Date(c.appliedDate + "T00:00:00").getTime()) /
+            86400000,
+        )
       : null;
-    const relance = ["Postulé","Relance"].includes(c.status) && daysSince >= 7 ? ` ⏰${daysSince}j` : "";
+    const relance =
+      ["Postulé", "Relance"].includes(c.status) && daysSince >= 7
+        ? ` ⏰${daysSince}j`
+        : "";
     const dateStr = c.appliedDate
-      ? new Date(c.appliedDate + "T00:00:00").toLocaleDateString("fr-FR") + relance
+      ? new Date(c.appliedDate + "T00:00:00").toLocaleDateString("fr-FR") +
+        relance
       : "—";
-    return [c.company, c.position, c.location || "—", c.status, c.priority || "—", dateStr, c.notes || "—"];
+    return [
+      c.company,
+      c.position,
+      c.location || "—",
+      c.status,
+      c.priority || "—",
+      dateStr,
+      c.notes || "—",
+    ];
   });
 
   doc.autoTable({
-    head: [["Entreprise", "Poste", "Lieu", "Statut", "Priorité", "Date", "Notes"]],
+    head: [
+      ["Entreprise", "Poste", "Lieu", "Statut", "Priorité", "Date", "Notes"],
+    ],
     body: tableRows,
     startY: 46,
     margin: { left: 14, right: 14 },
-    styles: { font: "helvetica", fontSize: 8.5, cellPadding: 3.5, overflow: "ellipsize", halign: "left" },
-    headStyles: { fillColor: [62, 42, 41], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 8, halign: "left" },
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 3.5,
+      overflow: "ellipsize",
+      halign: "left",
+    },
+    headStyles: {
+      fillColor: [62, 42, 41],
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      fontSize: 8,
+      halign: "left",
+    },
     alternateRowStyles: { fillColor: [250, 248, 246] },
     columnStyles: {
       0: { fontStyle: "bold", cellWidth: 38 },
@@ -1174,7 +1291,6 @@ function openLink(url) {
   if (url) window.open(url, "_blank", "noopener");
 }
 
-
 // ─── SORT ─────────────────────────────────────────────────────────────────────
 function handleSort(col) {
   if (state.sortCol === col) {
@@ -1200,13 +1316,14 @@ function updateHeaderDate() {
 
 // ─── HEATMAP + STREAKS ────────────────────────────────────────────────────────
 function calcStreaks() {
-  const pad = n => String(n).padStart(2, "0");
-  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const pad = (n) => String(n).padStart(2, "0");
+  const toKey = (d) =>
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
   const datesWithApp = new Set(
     state.candidatures
-      .map(c => (c.appliedDate || "").slice(0, 10))
-      .filter(Boolean)
+      .map((c) => (c.appliedDate || "").slice(0, 10))
+      .filter(Boolean),
   );
 
   const today = new Date();
@@ -1240,21 +1357,22 @@ function calcStreaks() {
   }
 
   const elCurrent = document.getElementById("streakCurrent");
-  const elBest    = document.getElementById("streakBest");
+  const elBest = document.getElementById("streakBest");
   if (elCurrent) elCurrent.textContent = current;
-  if (elBest)    elBest.textContent    = best;
+  if (elBest) elBest.textContent = best;
 }
 
 function renderHeatmap() {
   const grid = document.getElementById("heatmapGrid");
   if (!grid) return;
 
-  const pad = n => String(n).padStart(2, "0");
-  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const pad = (n) => String(n).padStart(2, "0");
+  const toKey = (d) =>
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
   // Count per day
   const countMap = {};
-  state.candidatures.forEach(c => {
+  state.candidatures.forEach((c) => {
     const k = (c.appliedDate || "").slice(0, 10);
     if (k) countMap[k] = (countMap[k] || 0) + 1;
   });
@@ -1277,9 +1395,18 @@ function renderHeatmap() {
     const key = toKey(d);
     const count = countMap[key] || 0;
     const level = count === 0 ? 0 : count === 1 ? 1 : count === 2 ? 2 : 3;
-    const label = d.toLocaleDateString("fr-FR", { day:"2-digit", month:"short", year:"numeric" });
-    const tip = count === 0 ? `Aucune — ${label}` : `${count} candidature${count > 1 ? "s" : ""} — ${label}`;
-    cells.push(`<div class="heatmap-cell" data-count="${level}" title="${tip}"></div>`);
+    const label = d.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+    const tip =
+      count === 0
+        ? `Aucune — ${label}`
+        : `${count} candidature${count > 1 ? "s" : ""} — ${label}`;
+    cells.push(
+      `<div class="heatmap-cell" data-count="${level}" title="${tip}"></div>`,
+    );
     d.setDate(d.getDate() + 1);
   }
 
@@ -1312,18 +1439,23 @@ function renderHeatmap() {
 
 // ─── AGENDA / CALENDRIER ──────────────────────────────────────────────────────
 function renderAgenda() {
-  const grid  = document.getElementById("agendaGrid");
+  const grid = document.getElementById("agendaGrid");
   const title = document.getElementById("agendaMonthTitle");
   if (!grid || !title) return;
 
-  const year  = state.agendaYear;
+  const year = state.agendaYear;
   const month = state.agendaMonth;
 
-  title.textContent = new Date(year, month, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  title.textContent = new Date(year, month, 1).toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric",
+  });
 
   // Day headers (Mon–Sun)
   const dayNames = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-  let html = dayNames.map(d => `<div class="agenda-day-header">${d}</div>`).join("");
+  let html = dayNames
+    .map((d) => `<div class="agenda-day-header">${d}</div>`)
+    .join("");
 
   // First day of month (adjusted to Monday = 0)
   const firstDay = new Date(year, month, 1);
@@ -1333,15 +1465,15 @@ function renderAgenda() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-  const pad = n => String(n).padStart(2, "0");
+  const pad = (n) => String(n).padStart(2, "0");
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayKey = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
 
   // Build count map filtered by candidatures
   const countMap = {};
   const candMap = {};
-  state.candidatures.forEach(c => {
+  state.candidatures.forEach((c) => {
     const k = (c.appliedDate || "").slice(0, 10);
     if (k) {
       if (!candMap[k]) candMap[k] = [];
@@ -1357,13 +1489,13 @@ function renderAgenda() {
 
   // Current month
   for (let d = 1; d <= daysInMonth; d++) {
-    const key = `${year}-${pad(month+1)}-${pad(d)}`;
+    const key = `${year}-${pad(month + 1)}-${pad(d)}`;
     const isToday = key === todayKey;
     const cands = candMap[key] || [];
 
     let eventsHtml = "";
     const maxShow = 3;
-    cands.slice(0, maxShow).forEach(c => {
+    cands.slice(0, maxShow).forEach((c) => {
       const color = STATUS_COLORS[c.status] || "var(--primary)";
       eventsHtml += `<div class="agenda-event" style="background:${color}22;color:${color}" onclick="event.stopPropagation();openEdit('${c.id}')" title="${escHtml(c.company)} — ${escHtml(c.position)}">${escHtml(c.company)}</div>`;
     });
@@ -1398,24 +1530,24 @@ function setView(v) {
 
 function updateViewDOM(v) {
   state.view = v;
-  const listSection     = document.getElementById("listView");
-  const kanbanSection   = document.getElementById("kanbanView");
+  const listSection = document.getElementById("listView");
+  const kanbanSection = document.getElementById("kanbanView");
   const timelineSection = document.getElementById("timelineView");
-  const agendaSection   = document.getElementById("agendaView");
-  const btnList     = document.getElementById("btnListView");
-  const btnKanban   = document.getElementById("btnKanbanView");
+  const agendaSection = document.getElementById("agendaView");
+  const btnList = document.getElementById("btnListView");
+  const btnKanban = document.getElementById("btnKanbanView");
   const btnTimeline = document.getElementById("btnTimelineView");
-  const btnAgenda   = document.getElementById("btnAgendaView");
+  const btnAgenda = document.getElementById("btnAgendaView");
 
-  listSection.style.display     = v === "list"     ? "" : "none";
-  kanbanSection.style.display   = v === "kanban"   ? "" : "none";
+  listSection.style.display = v === "list" ? "" : "none";
+  kanbanSection.style.display = v === "kanban" ? "" : "none";
   timelineSection.style.display = v === "timeline" ? "" : "none";
   if (agendaSection) agendaSection.style.display = v === "agenda" ? "" : "none";
 
-  btnList?.classList.toggle("active",     v === "list");
-  btnKanban?.classList.toggle("active",   v === "kanban");
+  btnList?.classList.toggle("active", v === "list");
+  btnKanban?.classList.toggle("active", v === "kanban");
   btnTimeline?.classList.toggle("active", v === "timeline");
-  btnAgenda?.classList.toggle("active",   v === "agenda");
+  btnAgenda?.classList.toggle("active", v === "agenda");
 
   render();
 }
@@ -1426,7 +1558,8 @@ function getGoalData() {
     const raw = localStorage.getItem(GOAL_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === "object" && "period" in parsed) return parsed;
+      if (parsed && typeof parsed === "object" && "period" in parsed)
+        return parsed;
     }
   } catch (_) {}
   return { period: "month", day: 2, week: 10, month: 30 };
@@ -1438,47 +1571,58 @@ function saveGoalData(data) {
 
 function countInPeriod(period) {
   const now = new Date();
-  const pad = n => String(n).padStart(2, "0");
+  const pad = (n) => String(n).padStart(2, "0");
   const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 
   if (period === "day") {
-    return state.candidatures.filter(c => (c.appliedDate || "").slice(0, 10) === today).length;
+    return state.candidatures.filter(
+      (c) => (c.appliedDate || "").slice(0, 10) === today,
+    ).length;
   }
   if (period === "week") {
-    const day  = now.getDay();
+    const day = now.getDay();
     const diff = day === 0 ? -6 : 1 - day; // back to Monday
     const monday = new Date(now);
     monday.setDate(now.getDate() + diff);
     const mondayStr = `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}`;
-    return state.candidatures.filter(c => {
+    return state.candidatures.filter((c) => {
       const d = (c.appliedDate || "").slice(0, 10);
       return d >= mondayStr && d <= today;
     }).length;
   }
   // month
   const monthPrefix = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
-  return state.candidatures.filter(c => (c.appliedDate || "").slice(0, 7) === monthPrefix).length;
+  return state.candidatures.filter(
+    (c) => (c.appliedDate || "").slice(0, 7) === monthPrefix,
+  ).length;
 }
 
 function renderGoal() {
-  const data   = getGoalData();
+  const data = getGoalData();
   const period = data.period;
   const target = data[period] || 1;
-  const count  = countInPeriod(period);
-  const pct    = Math.min(100, Math.round((count / target) * 100));
+  const count = countInPeriod(period);
+  const pct = Math.min(100, Math.round((count / target) * 100));
 
   const elCurrent = document.getElementById("goalCurrent");
-  const elTarget  = document.getElementById("goalTargetVal");
-  const elBar     = document.getElementById("goalBar");
-  const elPct     = document.getElementById("goalPercent");
-  const elUnit    = document.getElementById("goalUnit");
-  const card      = document.getElementById("goalCard");
+  const elTarget = document.getElementById("goalTargetVal");
+  const elBar = document.getElementById("goalBar");
+  const elPct = document.getElementById("goalPercent");
+  const elUnit = document.getElementById("goalUnit");
+  const card = document.getElementById("goalCard");
 
   if (elCurrent) elCurrent.textContent = count;
-  if (elTarget && !document.querySelector(".goal-edit-input")) elTarget.textContent = target;
-  if (elBar)    elBar.style.width = pct + "%";
-  if (elPct)    elPct.textContent = pct + "%";
-  if (elUnit)   elUnit.textContent = period === "day" ? "aujourd'hui" : period === "week" ? "cette semaine" : "ce mois";
+  if (elTarget && !document.querySelector(".goal-edit-input"))
+    elTarget.textContent = target;
+  if (elBar) elBar.style.width = pct + "%";
+  if (elPct) elPct.textContent = pct + "%";
+  if (elUnit)
+    elUnit.textContent =
+      period === "day"
+        ? "aujourd'hui"
+        : period === "week"
+          ? "cette semaine"
+          : "ce mois";
 
   const isReached = pct >= 100;
   if (card) card.classList.toggle("goal-reached", isReached);
@@ -1490,7 +1634,7 @@ function renderGoal() {
   }
   _prevGoalReached = isReached;
 
-  document.querySelectorAll(".goal-period-btn").forEach(btn => {
+  document.querySelectorAll(".goal-period-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.period === period);
   });
 }
@@ -1498,7 +1642,7 @@ function renderGoal() {
 function initGoal() {
   renderGoal();
 
-  document.querySelectorAll(".goal-period-btn").forEach(btn => {
+  document.querySelectorAll(".goal-period-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const data = getGoalData();
       data.period = btn.dataset.period;
@@ -1512,13 +1656,13 @@ function initGoal() {
 
   targetEl.addEventListener("click", () => {
     if (document.querySelector(".goal-edit-input")) return;
-    const data   = getGoalData();
+    const data = getGoalData();
     const period = data.period;
-    const input  = document.createElement("input");
-    input.type      = "number";
-    input.min       = "1";
-    input.max       = "999";
-    input.value     = data[period] || 1;
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "1";
+    input.max = "999";
+    input.value = data[period] || 1;
     input.className = "goal-edit-input";
     targetEl.replaceWith(input);
     input.focus();
@@ -1526,7 +1670,7 @@ function initGoal() {
 
     function save() {
       const val = Math.max(1, parseInt(input.value) || 1);
-      const d   = getGoalData();
+      const d = getGoalData();
       d[period] = val;
       saveGoalData(d);
       input.replaceWith(targetEl);
@@ -1534,8 +1678,13 @@ function initGoal() {
     }
     input.addEventListener("blur", save);
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter")  { e.preventDefault(); save(); }
-      if (e.key === "Escape") { input.replaceWith(targetEl); }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        save();
+      }
+      if (e.key === "Escape") {
+        input.replaceWith(targetEl);
+      }
     });
   });
 }
@@ -1544,7 +1693,16 @@ function initGoal() {
 function launchConfetti() {
   const container = document.getElementById("confettiContainer");
   if (!container) return;
-  const colors = ["#3E2A29", "#A1887F", "#66BB6A", "#FFB74D", "#8D6E63", "#DEC7BE", "#EF5350", "#3b82f6"];
+  const colors = [
+    "#3E2A29",
+    "#A1887F",
+    "#66BB6A",
+    "#FFB74D",
+    "#8D6E63",
+    "#DEC7BE",
+    "#EF5350",
+    "#3b82f6",
+  ];
   container.innerHTML = "";
   for (let i = 0; i < 70; i++) {
     const p = document.createElement("div");
@@ -1561,21 +1719,26 @@ function launchConfetti() {
     ].join(";");
     container.appendChild(p);
   }
-  setTimeout(() => { container.innerHTML = ""; }, 2800);
+  setTimeout(() => {
+    container.innerHTML = "";
+  }, 2800);
 }
 
 // ─── NOTES MODAL ─────────────────────────────────────────────────────────────
 function openNotesModal(id) {
-  const c = state.candidatures.find(x => x.id === id);
+  const c = state.candidatures.find((x) => x.id === id);
   if (!c || !c.notes) return;
 
   document.getElementById("notesTitle").textContent = c.company;
   document.getElementById("notesCompany").textContent = c.position;
-  document.getElementById("notesBody").innerHTML =
-    `<p>${escHtml(c.notes)}</p>`;
+  document.getElementById("notesBody").innerHTML = `<p>${escHtml(c.notes)}</p>`;
 
   const editBtn = document.getElementById("notesBtnEdit");
-  if (editBtn) editBtn.onclick = () => { closeNotesModal(); openEdit(id); };
+  if (editBtn)
+    editBtn.onclick = () => {
+      closeNotesModal();
+      openEdit(id);
+    };
 
   openModal("notesOverlay");
 }
@@ -1586,35 +1749,38 @@ function closeNotesModal() {
 
 // ─── PRESENTATION MODE ────────────────────────────────────────────────────────
 function initPresentation() {
-  const btn     = document.getElementById("btnPresentation");
+  const btn = document.getElementById("btnPresentation");
   const btnQuit = document.getElementById("btnQuitPresentation");
-  if (btn)     btn.addEventListener("click",     () => togglePresentation(true));
-  if (btnQuit) btnQuit.addEventListener("click", () => togglePresentation(false));
+  if (btn) btn.addEventListener("click", () => togglePresentation(true));
+  if (btnQuit)
+    btnQuit.addEventListener("click", () => togglePresentation(false));
 }
 
 function togglePresentation(active) {
   state.presentationMode = active;
   document.body.classList.toggle("presentation-mode", active);
   const banner = document.getElementById("presentationBanner");
-  const btn    = document.getElementById("btnPresentation");
+  const btn = document.getElementById("btnPresentation");
   if (banner) banner.style.display = active ? "flex" : "none";
-  if (btn)    btn.classList.toggle("active", active);
+  if (btn) btn.classList.toggle("active", active);
 }
 
 // ─── PROFILE PANEL ───────────────────────────────────────────────────────────
 function initProfilePanel() {
-  const btn     = document.getElementById("btnProfile");
-  const panel   = document.getElementById("profilePanel");
+  const btn = document.getElementById("btnProfile");
+  const panel = document.getElementById("profilePanel");
   const overlay = document.getElementById("profileOverlay");
-  const close   = document.getElementById("profileClose");
-  const body    = document.getElementById("profileBody");
+  const close = document.getElementById("profileClose");
+  const body = document.getElementById("profileBody");
 
   body.innerHTML = `
     <div class="profile-avatar">${PROFILE.initials}</div>
     <h3 class="profile-name">${PROFILE.name}</h3>
     <div class="profile-divider"></div>
     <div class="profile-links">
-      ${PROFILE.links.map(l => `
+      ${PROFILE.links
+        .map(
+          (l) => `
         <a href="${l.href}" class="profile-link"${l.href.startsWith("http") ? ' target="_blank" rel="noopener noreferrer"' : ""}>
           ${LINK_ICONS[l.icon]}
           <span class="profile-link-text">
@@ -1622,7 +1788,9 @@ function initProfilePanel() {
             <span class="profile-link-label">${l.label}</span>
           </span>
         </a>
-      `).join("")}
+      `,
+        )
+        .join("")}
     </div>
   `;
 
@@ -1649,17 +1817,34 @@ function initProfilePanel() {
 
 // ─── MAIL FAB ────────────────────────────────────────────────────────────────
 function initMailFab() {
-  const fab   = document.getElementById("mailFab");
+  const fab = document.getElementById("mailFab");
   const panel = document.getElementById("mailFabPanel");
   if (!fab || !panel) return;
 
-  function open()  { panel.classList.add("open"); fab.classList.add("open"); panel.removeAttribute("aria-hidden"); }
-  function close() { panel.classList.remove("open"); fab.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); }
-  function toggle() { panel.classList.contains("open") ? close() : open(); }
+  function open() {
+    panel.classList.add("open");
+    fab.classList.add("open");
+    panel.removeAttribute("aria-hidden");
+  }
+  function close() {
+    panel.classList.remove("open");
+    fab.classList.remove("open");
+    panel.setAttribute("aria-hidden", "true");
+  }
+  function toggle() {
+    panel.classList.contains("open") ? close() : open();
+  }
 
-  fab.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
-  document.addEventListener("click", (e) => { if (!e.target.closest("#mailFabWrap")) close(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  fab.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggle();
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#mailFabWrap")) close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
 }
 
 // ─── INIT ──────────────────────────────────────────────────────────────────
@@ -1688,8 +1873,8 @@ function init() {
   checkExportFreshness(); // Backup Alert
 
   // Sidebar toggle (mobile)
-  const sidebarToggle   = document.getElementById("sidebarToggle");
-  const sidebarEl       = document.getElementById("appSidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const sidebarEl = document.getElementById("appSidebar");
   const sidebarBackdrop = document.getElementById("sidebarBackdrop");
   if (sidebarToggle && sidebarEl) {
     sidebarToggle.addEventListener("click", () => {
@@ -1708,20 +1893,34 @@ function init() {
   document.getElementById("btnAdd").addEventListener("click", openAdd);
 
   // View toggle
-  document.getElementById("btnListView")?.addEventListener("click",     () => setView("list"));
-  document.getElementById("btnKanbanView")?.addEventListener("click",   () => setView("kanban"));
-  document.getElementById("btnTimelineView")?.addEventListener("click", () => setView("timeline"));
-  document.getElementById("btnAgendaView")?.addEventListener("click",   () => setView("agenda"));
+  document
+    .getElementById("btnListView")
+    ?.addEventListener("click", () => setView("list"));
+  document
+    .getElementById("btnKanbanView")
+    ?.addEventListener("click", () => setView("kanban"));
+  document
+    .getElementById("btnTimelineView")
+    ?.addEventListener("click", () => setView("timeline"));
+  document
+    .getElementById("btnAgendaView")
+    ?.addEventListener("click", () => setView("agenda"));
 
   // Agenda navigation
   document.getElementById("agendaPrev")?.addEventListener("click", () => {
     state.agendaMonth--;
-    if (state.agendaMonth < 0) { state.agendaMonth = 11; state.agendaYear--; }
+    if (state.agendaMonth < 0) {
+      state.agendaMonth = 11;
+      state.agendaYear--;
+    }
     renderAgenda();
   });
   document.getElementById("agendaNext")?.addEventListener("click", () => {
     state.agendaMonth++;
-    if (state.agendaMonth > 11) { state.agendaMonth = 0; state.agendaYear++; }
+    if (state.agendaMonth > 11) {
+      state.agendaMonth = 0;
+      state.agendaYear++;
+    }
     renderAgenda();
   });
 
@@ -1779,26 +1978,39 @@ function init() {
   });
 
   // Notes modal
-  document.getElementById("notesClose")?.addEventListener("click", closeNotesModal);
-  document.getElementById("notesBtnClose")?.addEventListener("click", closeNotesModal);
-  document.getElementById("notesOverlay")?.addEventListener("click", e => {
+  document
+    .getElementById("notesClose")
+    ?.addEventListener("click", closeNotesModal);
+  document
+    .getElementById("notesBtnClose")
+    ?.addEventListener("click", closeNotesModal);
+  document.getElementById("notesOverlay")?.addEventListener("click", (e) => {
     if (e.target === document.getElementById("notesOverlay")) closeNotesModal();
   });
 
   // Duplicate overlay
-  document.getElementById("dupClose")?.addEventListener("click", closeDupOverlay);
-  document.getElementById("dupCancelBtn")?.addEventListener("click", closeDupOverlay);
-  document.getElementById("dupConfirmBtn")?.addEventListener("click", confirmDuplicate);
-  document.getElementById("dupOverlay")?.addEventListener("click", e => {
+  document
+    .getElementById("dupClose")
+    ?.addEventListener("click", closeDupOverlay);
+  document
+    .getElementById("dupCancelBtn")
+    ?.addEventListener("click", closeDupOverlay);
+  document
+    .getElementById("dupConfirmBtn")
+    ?.addEventListener("click", confirmDuplicate);
+  document.getElementById("dupOverlay")?.addEventListener("click", (e) => {
     if (e.target === document.getElementById("dupOverlay")) closeDupOverlay();
   });
 
   // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
     const tag = document.activeElement?.tagName;
-    const isEditing = ["INPUT", "TEXTAREA", "SELECT"].includes(tag) || document.activeElement?.isContentEditable;
-    const anyOpen   = document.querySelector(".modal-overlay.open") ||
-                      document.getElementById("profilePanel")?.classList.contains("open");
+    const isEditing =
+      ["INPUT", "TEXTAREA", "SELECT"].includes(tag) ||
+      document.activeElement?.isContentEditable;
+    const anyOpen =
+      document.querySelector(".modal-overlay.open") ||
+      document.getElementById("profilePanel")?.classList.contains("open");
 
     if (e.key === "Escape") {
       closeAdd();
@@ -1819,31 +2031,35 @@ function init() {
       }
     }
   });
-
 }
 
 // ─── DATA MANAGEMENT ──────────────────────────────────────────────────────────
 function initDataManagement() {
   const btnData = document.getElementById("btnData");
   const closeData = document.getElementById("dataClose");
-  
-  if(btnData) btnData.addEventListener("click", () => openModal("dataModalOverlay"));
-  if(closeData) closeData.addEventListener("click", () => closeModal("dataModalOverlay"));
+
+  if (btnData)
+    btnData.addEventListener("click", () => openModal("dataModalOverlay"));
+  if (closeData)
+    closeData.addEventListener("click", () => closeModal("dataModalOverlay"));
 
   const btnExpJSON = document.getElementById("btnExportJSON");
-  if(btnExpJSON) btnExpJSON.addEventListener("click", exportJSON);
-  
+  if (btnExpJSON) btnExpJSON.addEventListener("click", exportJSON);
+
   const btnImpJSON = document.getElementById("btnImportJSON");
-  if(btnImpJSON) btnImpJSON.addEventListener("click", () => document.getElementById("importFile").click());
-  
+  if (btnImpJSON)
+    btnImpJSON.addEventListener("click", () =>
+      document.getElementById("importFile").click(),
+    );
+
   const impFile = document.getElementById("importFile");
-  if(impFile) impFile.addEventListener("change", importJSON);
-  
+  if (impFile) impFile.addEventListener("change", importJSON);
+
   const btnExpCSV = document.getElementById("btnExportCSV");
-  if(btnExpCSV) btnExpCSV.addEventListener("click", exportExcel);
+  if (btnExpCSV) btnExpCSV.addEventListener("click", exportExcel);
 
   const btnExpPDF = document.getElementById("btnExportPDF");
-  if(btnExpPDF) btnExpPDF.addEventListener("click", exportPDF);
+  if (btnExpPDF) btnExpPDF.addEventListener("click", exportPDF);
 }
 
 function exportJSON() {
@@ -1852,7 +2068,7 @@ function exportJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `job_tracker_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `job_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
